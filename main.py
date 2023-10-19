@@ -20,7 +20,7 @@ def main():
     actions = ('l', 'r', 'u', 'd')
     episodes = 5
 
-    mdp = MDP(environment, actions, episodes, 0.7, reward_function, agent_encoding=1, goal_encoding=3, obstacle_encoding=2)
+    mdp = MDP(environment, actions, reward_function, agent_encoding=1, obstacle_encoding=2)
 
 
     print('Environment:\n{}'.format(mdp.environment))

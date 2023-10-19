@@ -5,15 +5,12 @@ import numpy as np
 
 class MDP:
 
-    def __init__(self, environment, actions, episodes, learning_rate, reward_function, agent_encoding, obstacle_encoding, goal_encoding):
+    def __init__(self, environment, actions, reward_function, agent_encoding, obstacle_encoding):
         self.environment = environment
         self.actions = actions
-        self.episodes = episodes
-        self.learning_rate = learning_rate
         self.reward_function = reward_function
         self.agent_encoding = agent_encoding
         self.obstacle_encoding = obstacle_encoding
-        self.goal_encoding = goal_encoding
 
 
     def get_agent_position(self):
