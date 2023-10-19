@@ -16,18 +16,9 @@ class MDP:
         self.goal_encoding = goal_encoding
 
 
-    def get_position(self, feature):
-        match feature:
-            case 'agent':
-                item = self.agent_encoding
-            case 'obstacle':
-                item = self.obstacle_encoding
-            case 'goal_encoding':
-                item = self.goal_encoding
-            case _:
-                raise Exception('Error while fetching a position - no such item as "{}".'.format(feature))
+    def get_agent_position(self):
         for position, i in np.ndenumerate(self.environment):
-            if i == item:
+            if i == self.agent_encoding:
                 return position
 
 
@@ -36,8 +27,7 @@ class MDP:
 
 
     def encode_action(self, action):
-        environment = self.environment
-        x, y = self.get_position('agent')
+        x, y = self.get_agent_position()
 
 
         match action:
@@ -55,7 +45,7 @@ class MDP:
 
     def take_action(self, action):
         action_encoded = self.encode_action(action)
-        agent_position = self.get_position('agent')
+        agent_position = self.get_agent_position()
 
         is_valid = self.validate_action(action)
 

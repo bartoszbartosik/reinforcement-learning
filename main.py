@@ -25,7 +25,7 @@ def main():
 
     print('Environment:\n{}'.format(mdp.environment))
     print('Actions: {}'.format(mdp.actions))
-    print('Current agent position: {}'.format(mdp.environment[mdp.get_position('agent')]))
+    print('Current agent position: {}'.format(mdp.environment[mdp.get_agent_position()]))
 
     print(mdp.qtable)
 

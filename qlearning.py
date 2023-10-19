@@ -19,7 +19,7 @@ class QLearning:
         #
         # return self.qtable[self.agent_position]
 
-        agent_position = self.mdp.get_position('agent')
+        agent_position = self.mdp.get_agent_position()
 
         q_old = self.qtable[agent_position]
         r_new = self.mdp.environment[agent_position]
