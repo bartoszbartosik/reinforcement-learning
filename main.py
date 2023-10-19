@@ -27,8 +27,6 @@ def main():
     print('Actions: {}'.format(mdp.actions))
     print('Current agent position: {}'.format(mdp.environment[mdp.get_agent_position()]))
 
-    print(mdp.qtable)
-
     print('Action reward: {}'.format(mdp.take_action('r')))
     print('Environment:\n{}'.format(mdp.environment))
     print('Action reward: {}'.format(mdp.take_action('r')))
@@ -45,9 +43,6 @@ def main():
     print('Environment:\n{}'.format(mdp.environment))
     print('Action reward: {}'.format(mdp.take_action('l')))
     print('Environment:\n{}'.format(mdp.environment))
-
-    ql = QLearning(mdp)
-
 
 
 if __name__ == '__main__':

@@ -56,7 +56,6 @@ class MDP:
     def __encode_action(self, action):
         x, y = self.get_agent_position()
 
-
         match action:
             case 'l':
                 return x, y - 1
