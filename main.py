@@ -1,6 +1,5 @@
 import numpy as np
 from mdp import MDP
-from qlearning import QLearning
 
 def main():
 
@@ -12,9 +11,9 @@ def main():
         return -10
 
     environment = np.array([[0, 3, 0, 0, 0],
-                                [0, 0, 0, 0, 0],
-                                [2, 2, 2, 0, 0],
-                                [1, 0, 0, 0, 0]])
+                            [0, 0, 0, 0, 0],
+                            [2, 2, 2, 0, 0],
+                            [1, 0, 0, 0, 0]])
 
 
     actions = ('l', 'r', 'u', 'd')
