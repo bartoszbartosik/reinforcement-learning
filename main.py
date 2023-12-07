@@ -1,5 +1,6 @@
 import numpy as np
 from mdp import MDP
+from grid_env import GridEnv, GridElements
 
 def main():
 
@@ -15,6 +16,13 @@ def main():
                             [2, 2, 2, 0, 0],
                             [1, 0, 0, 0, 0]])
 
+    grid = GridEnv(5, 4)
+    grid.set_obstacle((2,0))
+    grid.set_obstacle((2,1))
+    grid.set_obstacle((2,2))
+    grid.set_agent((3,0))
+    grid.set_reward((0,1))
+    print(grid.grid)
 
     actions = ('l', 'r', 'u', 'd')
     episodes = 5
