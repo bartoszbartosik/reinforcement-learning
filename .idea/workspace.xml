@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="13a20a23-0d92-4e9c-83fa-7e95c6fe28a6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grid_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/grid_env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
