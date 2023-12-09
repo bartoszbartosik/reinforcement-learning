@@ -2,17 +2,20 @@ from enum import Enum
 
 import numpy as np
 
+
 class GridElements(Enum):
     FREE = 0
     AGENT = 1
     OBSTACLE = 2
     REWARD = 3
 
+
 class AgentActions(Enum):
     UP = 0
     DOWN = 1
     LEFT = 2
     RIGHT = 3
+
 
 class GridEnv:
 
@@ -26,7 +29,6 @@ class GridEnv:
 
 
     def action(self, action: AgentActions):
-
         if self.validate_action(action):
             old_pos = self.agent_pos.copy()
             match action:
@@ -38,7 +40,6 @@ class GridEnv:
                     self.agent_pos[1] -= 1
                 case AgentActions.RIGHT:
                     self.agent_pos[1] += 1
-            print('old_pos', old_pos, 'new_pos', self.agent_pos)
             self.grid[tuple(self.agent_pos)], self.grid[tuple(old_pos)] = self.grid[tuple(old_pos)], self.grid[tuple(self.agent_pos)]
             return True
         return False

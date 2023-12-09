@@ -2,6 +2,7 @@ import numpy as np
 from mdp import MDP
 from grid_env import GridEnv, GridElements, AgentActions
 
+
 def main():
 
     def reward_function(env, valid):
@@ -27,10 +28,10 @@ def main():
     print(grid.action(AgentActions.RIGHT))
     print(grid.grid)
 
-    actions = ('l', 'r', 'u', 'd')
-    episodes = 5
+    mdp = MDP(grid, reward_function)
 
-    mdp = MDP(environment, actions, reward_function, agent_encoding=1, obstacle_encoding=2)
+    mdp.action(AgentActions.RIGHT)
+    print(mdp.environment.grid)
 
 
     # print('Environment:\n{}'.format(mdp.environment))
