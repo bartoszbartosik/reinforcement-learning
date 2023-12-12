@@ -1,59 +1,35 @@
 import numpy as np
 from mdp import MDP
-from grid_env import GridEnv, GridElements, AgentActions
+from grid_env import GridEnv
 
 
 def main():
 
-    def reward_function(env, valid):
-        if valid:
-            if env[0, 1] == 1:
-                return 10
+    gridworld = GridEnv(5, 5)
+
+    def gridworld_reward(env: GridEnv, action: GridEnv.AgentActions):
+        if env.agent_pos == [0,1]:
+            return 10
+        elif env.agent_pos == [0,3]:
+            return 5
+        elif not env.validate_action(action):
+            return -1
+        else:
             return 0
-        return -10
 
-    environment = np.array([[0, 3, 0, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [2, 2, 2, 0, 0],
-                            [1, 0, 0, 0, 0]])
+    mdp_gridworld = MDP(gridworld, gridworld_reward)
 
-    grid = GridEnv(5, 4)
-    grid.set_obstacle((2,0))
-    grid.set_obstacle((2,1))
-    grid.set_obstacle((2,2))
-    grid.set_agent([3,0])
-    grid.set_reward((0,1))
+    print(gridworld.grid)
+    print(mdp_gridworld.action(GridEnv.AgentActions.RIGHT))
+    print(mdp_gridworld.action(GridEnv.AgentActions.RIGHT))
+    print(mdp_gridworld.action(GridEnv.AgentActions.UP))
+    print(mdp_gridworld.action(GridEnv.AgentActions.RIGHT))
+    print(mdp_gridworld.action(GridEnv.AgentActions.DOWN))
+    print(gridworld.grid)
+    print(mdp_gridworld.policy)
+    print(mdp_gridworld.policy[GridEnv.AgentActions.UP])
 
-    print(grid.grid)
-    print(grid.action(AgentActions.RIGHT))
-    print(grid.grid)
-
-    mdp = MDP(grid, reward_function)
-
-    mdp.action(AgentActions.RIGHT)
-    print(mdp.environment.grid)
-
-
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Actions: {}'.format(mdp.actions))
-    # print('Current agent position: {}'.format(mdp.environment[mdp.get_agent_position()]))
-    #
-    # print('Action reward: {}'.format(mdp.take_action('r')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('r')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('r')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('u')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('u')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('u')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('l')))
-    # print('Environment:\n{}'.format(mdp.environment))
-    # print('Action reward: {}'.format(mdp.take_action('l')))
-    # print('Environment:\n{}'.format(mdp.environment))
+    # print(mdp_gridworld.policy[])
 
 
 if __name__ == '__main__':
