@@ -7,7 +7,6 @@ class GridElements(Enum):
     FREE = 0
     AGENT = 1
     OBSTACLE = 2
-    REWARD = 3
 
 
 class AgentActions(Enum):
@@ -46,7 +45,6 @@ class GridEnv:
 
 
     def validate_action(self, action):
-
         # Check for walls
         if self.agent_pos[0] == 0 and action == AgentActions.UP:
             return False
@@ -75,7 +73,3 @@ class GridEnv:
 
     def set_obstacle(self, obstacle_position: tuple):
         self.grid[obstacle_position] = GridElements.OBSTACLE.value
-
-
-    def set_reward(self, reward_position: tuple):
-        self.grid[reward_position] = GridElements.REWARD.value
