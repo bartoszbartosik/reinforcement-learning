@@ -15,11 +15,13 @@ class MDP:
 
     def action(self, action):
         self.environment.action(action)
+        return self.reward_function(self.environment, action)
+
+
+    def reward(self, action):
+        pass
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #
-
-    def __get_reward(self, valid):
-        return self.reward_function(self.environment, valid)
 
