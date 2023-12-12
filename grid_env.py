@@ -25,6 +25,7 @@ class GridEnv:
         self.grid = GridElements.FREE.value*np.ones(shape=(height, width))
 
         self.agent_pos = [0, 0]
+        self.grid[tuple(self.agent_pos)] = GridElements.AGENT.value
 
 
     def action(self, action: AgentActions):
