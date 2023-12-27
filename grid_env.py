@@ -7,71 +7,75 @@ import numpy as np
 
 class GridEnv:
 
+    # Encode grid elements
     class GridElements(Enum):
         FREE = 0
         AGENT = 1
         OBSTACLE = 2
 
-
+    # Encode agent's actions
     class AgentActions(Enum):
         UP = 0
         DOWN = 1
         LEFT = 2
         RIGHT = 3
 
+
     def __init__(self, width, height):
+        # Set dimensions of the grid
         self.width = width      # columns
         self.height = height    # rows
 
+        # Create a grid
         self.grid = GridEnv.GridElements.FREE.value*np.ones(shape=(height, width))
 
-        self.agent_pos = [0, 0]
-        self.grid[tuple(self.agent_pos)] = GridEnv.GridElements.AGENT.value
+        # Initialize the agent position
+        self.state = [0, 0]
+        self.grid[tuple(self.state)] = GridEnv.GridElements.AGENT.value
 
 
     def action(self, action: AgentActions):
-        if self.validate_action(action):
-            old_pos = self.agent_pos.copy()
-            match action:
-                case GridEnv.AgentActions.UP:
-                    self.agent_pos[0] -= 1
-                case GridEnv.AgentActions.DOWN:
-                    self.agent_pos[0] += 1
-                case GridEnv.AgentActions.LEFT:
-                    self.agent_pos[1] -= 1
-                case GridEnv.AgentActions.RIGHT:
-                    self.agent_pos[1] += 1
-            self.grid[tuple(self.agent_pos)], self.grid[tuple(old_pos)] = self.grid[tuple(old_pos)], self.grid[tuple(self.agent_pos)]
+        # Verify action and get state transition
+        next_state = self.validate_action(action, self.state.copy())
+
+        # If state is valid, perform its transition
+        if next_state is not None:
+            self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
+            self.state = next_state
             return True
         return False
 
 
-    def validate_action(self, action):
+    def validate_action(self, action, state):
         # Check for walls
-        if self.agent_pos[0] == 0 and action == GridEnv.AgentActions.UP:
-            return False
-        elif self.agent_pos[0] == len(self.grid)-1 and action == GridEnv.AgentActions.DOWN:
-            return False
-        elif self.agent_pos[1] == 0 and action == GridEnv.AgentActions.LEFT:
-            return False
-        elif self.agent_pos[1] == len(self.grid[0])-1 and action == GridEnv.AgentActions.RIGHT:
-            return False
-        # Check for obstacles
-        elif action == GridEnv.AgentActions.UP and self.grid[self.agent_pos[0]-1, self.agent_pos[1]] == GridEnv.GridElements.OBSTACLE.value:
-            return False
-        elif action == GridEnv.AgentActions.DOWN and self.grid[self.agent_pos[0]+1, self.agent_pos[1]] == GridEnv.GridElements.OBSTACLE.value:
-            return False
-        elif action == GridEnv.AgentActions.LEFT and self.grid[self.agent_pos[0], self.agent_pos[1]-1] == GridEnv.GridElements.OBSTACLE.value:
-            return False
-        elif action == GridEnv.AgentActions.RIGHT and self.grid[self.agent_pos[0], self.agent_pos[1]+1] == GridEnv.GridElements.OBSTACLE.value:
-            return False
-        return True
+        if (state[0] == 0 and action == GridEnv.AgentActions.UP or
+            state[0] == len(self.grid)-1 and action == GridEnv.AgentActions.DOWN or
+            state[1] == 0 and action == GridEnv.AgentActions.LEFT or
+            state[1] == len(self.grid[0])-1 and action == GridEnv.AgentActions.RIGHT or
+            action == GridEnv.AgentActions.UP and self.grid[state[0]-1, state[1]] == GridEnv.GridElements.OBSTACLE.value or
+            action == GridEnv.AgentActions.DOWN and self.grid[state[0]+1, state[1]] == GridEnv.GridElements.OBSTACLE.value or
+            action == GridEnv.AgentActions.LEFT and self.grid[state[0], state[1]-1] == GridEnv.GridElements.OBSTACLE.value or
+            action == GridEnv.AgentActions.RIGHT and self.grid[state[0], state[1]+1] == GridEnv.GridElements.OBSTACLE.value):
+            return None
+        # Update the state
+        else:
+            match action:
+                case GridEnv.AgentActions.UP:
+                    state[0] -= 1
+                case GridEnv.AgentActions.DOWN:
+                    state[0] += 1
+                case GridEnv.AgentActions.LEFT:
+                    state[1] -= 1
+                case GridEnv.AgentActions.RIGHT:
+                    state[1] += 1
+            return state
 
 
     def set_agent(self, agent_position: list):
-        self.agent_pos = agent_position
-        self.grid[tuple(agent_position)] = GridEnv.GridElements.AGENT.value
+        self.grid[tuple(self.state)], self.grid[tuple(agent_position)] = self.grid[tuple(agent_position)], self.grid[tuple(self.state)]
+        self.state = agent_position
 
 
-    def set_obstacle(self, obstacle_position: tuple):
-        self.grid[obstacle_position] = GridEnv.GridElements.OBSTACLE.value
+    def set_obstacle(self, obstacle_position: list):
+        self.grid[tuple(obstacle_position)] = GridEnv.GridElements.OBSTACLE.value
+
