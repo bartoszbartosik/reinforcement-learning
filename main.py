@@ -12,8 +12,8 @@ def main():
             return 10
         elif state == [0, 3] and action in GridEnv.AgentActions:
             return 5
-        elif next_state is None:
-            return -1
+        elif next_state == state:
+            return -100
         else:
             return 0
 
@@ -37,9 +37,13 @@ def main():
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
 
-    print(mdp_gridworld.state_values)
+    print(mdp_gridworld.v_values)
     mdp_gridworld.compute_state_values()
-    print(mdp_gridworld.state_values)
+    print(mdp_gridworld.v_values)
+
+    print(mdp_gridworld.q_values)
+    mdp_gridworld.compute_action_values()
+    print(mdp_gridworld.q_values)
     # print(mdp_gridworld.compute_state_values())
     # print(mdp_gridworld.state_values)
 

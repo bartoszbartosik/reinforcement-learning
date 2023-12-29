@@ -36,7 +36,7 @@ class GridEnv:
 
     def action(self, action: AgentActions):
         # Verify action and get state transition
-        next_state = self.get_next_state(action, self.state.copy())
+        next_state = self.get_next_state(self.state.copy(), action)
 
         # If state is valid, perform its transition
         if next_state != self.state:
@@ -46,7 +46,7 @@ class GridEnv:
         return False
 
 
-    def get_next_state(self, action, state):
+    def get_next_state(self, state, action):
         # Check for walls
         if (state[0] == 0 and action == GridEnv.AgentActions.UP or
             state[0] == len(self.grid)-1 and action == GridEnv.AgentActions.DOWN or
