@@ -21,28 +21,10 @@ class MDP:
 
 
     def action(self, action):
-        next_state = self.environment.validate_action(action, self.environment.state.copy())
+        next_state = self.environment.get_next_state(action, self.environment.state.copy())
         reward = self.reward_function(self.environment.state, action, next_state)
         self.environment.action(action)
         return reward
-
-
-    def state_value(self, state):
-        x, y = state
-        if self.environment.grid[x, y] == GridEnv.GridElements.OBSTACLE.value:
-            return 0  # For obstacles, value is 0
-
-        max_value = float("-inf")
-        for action in self.actions:
-            next_state = self.environment.validate_action(action, state.copy())
-            if next_state is not None:
-                reward = self.reward_function(state, action, next_state)
-                next_x, next_y = next_state
-                value = reward + self.gamma * self.state_values[next_x, next_y]
-                if value > max_value:
-                    max_value = value
-
-        return max_value
 
 
     def compute_state_value(self, state):
@@ -51,9 +33,8 @@ class MDP:
 
         max_value = float('-inf')
         for action in self.actions:
-            next_state = self.environment.validate_action(action, state.copy())
+            next_state = self.environment.get_next_state(action, state.copy())
             reward = self.reward_function(state, action, next_state)
-            next_state = state if next_state is None else next_state
             value = reward + self.gamma*self.state_values[tuple(next_state)]
             if value > max_value:
                 max_value = value
@@ -62,10 +43,9 @@ class MDP:
 
 
     def compute_state_values(self):
-        for _ in range(10):
+        for _ in range(1000):
             for i in range(self.environment.width):
                 for j in range(self.environment.height):
-                    # v_old = self.state_values[i, j]
                     v_new = self.compute_state_value([i, j])
                     self.state_values[i, j] = v_new
 
