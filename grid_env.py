@@ -38,11 +38,26 @@ class GridEnv:
         # Verify action and get state transition
         next_state = self.validate_action(action, self.state.copy())
 
+        # Teleport to other state
+        if self.state == [0, 1]:
+            next_state = [4, 1]
+            self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
+            self.state = next_state
+            return True
+
+        if self.state == [0, 3]:
+            next_state = [2, 3]
+            self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
+            self.state = next_state
+            return True
+
         # If state is valid, perform its transition
         if next_state is not None:
             self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
             self.state = next_state
             return True
+
+
         return False
 
 

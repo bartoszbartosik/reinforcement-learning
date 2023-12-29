@@ -62,10 +62,9 @@ class MDP:
 
 
     def compute_state_values(self):
-        for _ in range(10):
+        for _ in range(1000):
             for i in range(self.environment.width):
                 for j in range(self.environment.height):
-                    # v_old = self.state_values[i, j]
                     v_new = self.compute_state_value([i, j])
                     self.state_values[i, j] = v_new
 

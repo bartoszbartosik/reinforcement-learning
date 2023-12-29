@@ -21,18 +21,23 @@ def main():
 
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
+    print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.RIGHT)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
+    print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.DOWN)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
+    print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.UP)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
+    print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.RIGHT)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
+    print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.DOWN)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
@@ -40,13 +45,6 @@ def main():
     print(mdp_gridworld.state_values)
     mdp_gridworld.compute_state_values()
     print(mdp_gridworld.state_values)
-    # print(mdp_gridworld.compute_state_values())
-    # print(mdp_gridworld.state_values)
-
-    # print(mdp_gridworld.state_value2([0,0]))
-
-    # print(mdp_gridworld.policy)
-    # print(mdp_gridworld.policy[GridEnv.AgentActions.UP])
 
 
 if __name__ == '__main__':
