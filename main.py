@@ -46,7 +46,7 @@ def main():
     print(mdp_gridworld.v_values)
     mdp_gridworld.compute_state_values()
 
-    print(mdp_gridworld.v_values)
+    print(np.round(mdp_gridworld.v_values, 1))
 
     print(mdp_gridworld.q_values)
     mdp_gridworld.compute_action_values()

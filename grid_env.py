@@ -38,19 +38,6 @@ class GridEnv:
         # Verify action and get state transition
         next_state = self.get_next_state(self.state.copy(), action)
 
-        # Teleport to other state
-        if self.state == [0, 1]:
-            next_state = [4, 1]
-            self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
-            self.state = next_state
-            return True
-
-        if self.state == [0, 3]:
-            next_state = [2, 3]
-            self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
-            self.state = next_state
-            return True
-
         # If state is valid, perform its transition
         if next_state != self.state:
             self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
@@ -63,7 +50,11 @@ class GridEnv:
 
     def get_next_state(self, state, action):
         # Check for walls
-        if (state[0] == 0 and action == GridEnv.AgentActions.UP or
+        if state == [0, 1]:
+            state = [4, 1]
+        elif state == [0, 3]:
+            state = [2, 3]
+        elif (state[0] == 0 and action == GridEnv.AgentActions.UP or
             state[0] == len(self.grid)-1 and action == GridEnv.AgentActions.DOWN or
             state[1] == 0 and action == GridEnv.AgentActions.LEFT or
             state[1] == len(self.grid[0])-1 and action == GridEnv.AgentActions.RIGHT or
