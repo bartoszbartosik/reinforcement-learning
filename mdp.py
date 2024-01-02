@@ -58,7 +58,7 @@ class MDP:
         if self.environment.grid[tuple(state)] == self.environment.GridElements.OBSTACLE.value:
             return 0
 
-        next_state = self.environment.get_next_state(state, action)
+        next_state = self.environment.get_next_state(state.copy(), action)
         reward = self.reward_function(state, action, next_state)
         q = reward + self.gamma*max(self.q_values[tuple(next_state)])
 
