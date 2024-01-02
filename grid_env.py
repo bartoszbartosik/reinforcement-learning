@@ -36,7 +36,7 @@ class GridEnv:
 
     def action(self, action: AgentActions):
         # Verify action and get state transition
-        next_state = self.validate_action(action, self.state.copy())
+        next_state = self.get_next_state(self.state.copy(), action)
 
         # Teleport to other state
         if self.state == [0, 1]:
@@ -52,7 +52,7 @@ class GridEnv:
             return True
 
         # If state is valid, perform its transition
-        if next_state is not None:
+        if next_state != self.state:
             self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
             self.state = next_state
             return True
@@ -61,7 +61,7 @@ class GridEnv:
         return False
 
 
-    def validate_action(self, action, state):
+    def get_next_state(self, state, action):
         # Check for walls
         if (state[0] == 0 and action == GridEnv.AgentActions.UP or
             state[0] == len(self.grid)-1 and action == GridEnv.AgentActions.DOWN or
@@ -71,7 +71,7 @@ class GridEnv:
             action == GridEnv.AgentActions.DOWN and self.grid[state[0]+1, state[1]] == GridEnv.GridElements.OBSTACLE.value or
             action == GridEnv.AgentActions.LEFT and self.grid[state[0], state[1]-1] == GridEnv.GridElements.OBSTACLE.value or
             action == GridEnv.AgentActions.RIGHT and self.grid[state[0], state[1]+1] == GridEnv.GridElements.OBSTACLE.value):
-            return None
+            pass
         # Update the state
         else:
             match action:
@@ -83,7 +83,7 @@ class GridEnv:
                     state[1] -= 1
                 case GridEnv.AgentActions.RIGHT:
                     state[1] += 1
-            return state
+        return state
 
 
     def set_agent(self, agent_position: list):
