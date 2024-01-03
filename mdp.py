@@ -14,14 +14,18 @@ class MDP:
         self.gamma = discount_factor
 
         self.policy = dict()
-        for action in self.actions:
-            self.policy[action] = 1/len(self.actions)*np.ones(shape=(len(self.environment.grid[0]), len(self.environment.grid[1])))
+        for i in range(self.environment.width):
+            for j in range(self.environment.height):
+                self.policy[(i, j)] = 1/len(self.environment.AgentActions) * np.ones_like(self.environment.AgentActions)
 
-        self.v_values = np.zeros(shape=(len(self.environment.grid[0]), len(self.environment.grid[1])))
+        self.v_values = np.zeros_like(self.environment.grid)
         self.q_values = dict()
         for i in range(self.environment.width):
             for j in range(self.environment.height):
                 self.q_values[(i, j)] = np.zeros(shape=(len(self.environment.AgentActions)))
+
+        self.evaluation_values = np.zeros_like(self.environment.grid)
+
 
 
     def action(self, action):
@@ -47,11 +51,17 @@ class MDP:
 
 
     def compute_state_values(self):
-        for _ in range(1000):
+        epsilon = 0.0001
+
+        delta = float('inf')
+        while delta > epsilon:
+            delta = 0
             for i in range(self.environment.width):
                 for j in range(self.environment.height):
-                    v = self.compute_state_value([i, j])
-                    self.v_values[i, j] = v
+                    v_old = self.v_values[i, j]
+                    v_new = self.compute_state_value([i, j])
+                    self.v_values[i, j] = v_new
+                    delta = max(delta, abs(v_new - v_old))
 
 
     def compute_action_value(self, state, action):
@@ -66,13 +76,44 @@ class MDP:
 
 
     def compute_action_values(self):
-        for _ in range(1000):
+        epsilon = 0.0001
+
+        delta = float('inf')
+        while delta > epsilon:
+            delta = 0
             for i in range(self.environment.width):
                 for j in range(self.environment.height):
                     for action in self.environment.AgentActions:
-                        q = self.compute_action_value([i, j], action)
-                        self.q_values[i, j][action.value] = q
+                        q_old = self.q_values[i, j][action.value]
+                        q_new = self.compute_action_value([i, j], action)
+                        self.q_values[i, j][action.value] = q_new
+                        delta = max(delta, abs(q_new - q_old))
 
+
+    def evaluate_state(self, state):
+        if self.environment.grid[tuple(state)] == self.environment.GridElements.OBSTACLE.value:
+            return 0
+
+        v = 0
+        for pi_a, action in zip(self.policy[tuple(state)], self.environment.AgentActions):
+            next_state = self.environment.get_next_state(state.copy(), action)
+            reward = self.reward_function(state, action, next_state)
+            v += pi_a * (reward + self.gamma * self.evaluation_values[tuple(next_state)])
+
+        return v
+
+    def policy_evaluation(self):
+        epsilon = 0.0001
+
+        delta = float('inf')
+        while delta > epsilon:
+            delta = 0
+            for i in range(self.environment.width):
+                for j in range(self.environment.height):
+                    v_old = self.evaluation_values[i, j]
+                    v_new = self.evaluate_state([i, j])
+                    self.evaluation_values[i, j] = v_new
+                    delta = max(delta, abs(v_new - v_old))
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #

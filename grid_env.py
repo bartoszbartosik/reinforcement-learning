@@ -3,8 +3,6 @@ from enum import Enum
 import numpy as np
 
 
-
-
 class GridEnv:
 
     # Encode grid elements
@@ -12,6 +10,7 @@ class GridEnv:
         FREE = 0
         AGENT = 1
         OBSTACLE = 2
+        TERMINAL = 4
 
     # Encode agent's actions
     class AgentActions(Enum):
@@ -43,7 +42,6 @@ class GridEnv:
             self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
             self.state = next_state
             return True
-
 
         return False
 
@@ -84,4 +82,8 @@ class GridEnv:
 
     def set_obstacle(self, obstacle_position: list):
         self.grid[tuple(obstacle_position)] = GridEnv.GridElements.OBSTACLE.value
+
+
+    def set_terminal(self, terminal_position: list):
+        self.grid[tuple(terminal_position)] = GridEnv.GridElements.TERMINAL.value
 

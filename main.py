@@ -55,6 +55,11 @@ def main():
 
     pp.pprint(mdp_gridworld.q_values)
 
+    print(mdp_gridworld.policy)
+
+    mdp_gridworld.policy_evaluation()
+    print(mdp_gridworld.evaluation_values)
+
     # print(mdp_gridworld.compute_state_values())
     # print(mdp_gridworld.state_values)
 
