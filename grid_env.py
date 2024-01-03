@@ -1,9 +1,11 @@
 from enum import Enum
 
+from environment import Environment
+
 import numpy as np
 
 
-class GridEnv:
+class GridEnv(Environment):
 
     # Encode grid elements
     class GridElements(Enum):
@@ -13,7 +15,7 @@ class GridEnv:
         TERMINAL = 4
 
     # Encode agent's actions
-    class AgentActions(Enum):
+    class AgentActions(Environment.AgentActions):
         UP = 0
         DOWN = 1
         LEFT = 2
