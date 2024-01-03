@@ -1,11 +1,11 @@
 from enum import Enum
 
-from environment import Environment
+from envs.environment import Environment
 
 import numpy as np
 
 
-class GridEnv(Environment):
+class GridA(Environment):
 
     # Encode grid elements
     class GridElements(Enum):
@@ -28,11 +28,11 @@ class GridEnv(Environment):
         self.height = height    # rows
 
         # Create a grid
-        self.grid = GridEnv.GridElements.FREE.value*np.ones(shape=(height, width))
+        self.grid = GridA.GridElements.FREE.value * np.ones(shape=(height, width))
 
         # Initialize the agent position
         self.state = [0, 0]
-        self.grid[tuple(self.state)] = GridEnv.GridElements.AGENT.value
+        self.grid[tuple(self.state)] = GridA.GridElements.AGENT.value
 
 
     def action(self, action: AgentActions):
@@ -54,25 +54,25 @@ class GridEnv(Environment):
             state = [4, 1]
         elif state == [0, 3]:
             state = [2, 3]
-        elif (state[0] == 0 and action == GridEnv.AgentActions.UP or
-            state[0] == len(self.grid)-1 and action == GridEnv.AgentActions.DOWN or
-            state[1] == 0 and action == GridEnv.AgentActions.LEFT or
-            state[1] == len(self.grid[0])-1 and action == GridEnv.AgentActions.RIGHT or
-            action == GridEnv.AgentActions.UP and self.grid[state[0]-1, state[1]] == GridEnv.GridElements.OBSTACLE.value or
-            action == GridEnv.AgentActions.DOWN and self.grid[state[0]+1, state[1]] == GridEnv.GridElements.OBSTACLE.value or
-            action == GridEnv.AgentActions.LEFT and self.grid[state[0], state[1]-1] == GridEnv.GridElements.OBSTACLE.value or
-            action == GridEnv.AgentActions.RIGHT and self.grid[state[0], state[1]+1] == GridEnv.GridElements.OBSTACLE.value):
+        elif (state[0] == 0 and action == GridA.AgentActions.UP or
+              state[0] == len(self.grid) - 1 and action == GridA.AgentActions.DOWN or
+              state[1] == 0 and action == GridA.AgentActions.LEFT or
+              state[1] == len(self.grid[0]) - 1 and action == GridA.AgentActions.RIGHT or
+              action == GridA.AgentActions.UP and self.grid[state[0] - 1, state[1]] == GridA.GridElements.OBSTACLE.value or
+              action == GridA.AgentActions.DOWN and self.grid[state[0] + 1, state[1]] == GridA.GridElements.OBSTACLE.value or
+              action == GridA.AgentActions.LEFT and self.grid[state[0], state[1] - 1] == GridA.GridElements.OBSTACLE.value or
+              action == GridA.AgentActions.RIGHT and self.grid[state[0], state[1] + 1] == GridA.GridElements.OBSTACLE.value):
             pass
         # Update the state
         else:
             match action:
-                case GridEnv.AgentActions.UP:
+                case GridA.AgentActions.UP:
                     state[0] -= 1
-                case GridEnv.AgentActions.DOWN:
+                case GridA.AgentActions.DOWN:
                     state[0] += 1
-                case GridEnv.AgentActions.LEFT:
+                case GridA.AgentActions.LEFT:
                     state[1] -= 1
-                case GridEnv.AgentActions.RIGHT:
+                case GridA.AgentActions.RIGHT:
                     state[1] += 1
         return state
 
@@ -83,9 +83,9 @@ class GridEnv(Environment):
 
 
     def set_obstacle(self, obstacle_position: list):
-        self.grid[tuple(obstacle_position)] = GridEnv.GridElements.OBSTACLE.value
+        self.grid[tuple(obstacle_position)] = GridA.GridElements.OBSTACLE.value
 
 
     def set_terminal(self, terminal_position: list):
-        self.grid[tuple(terminal_position)] = GridEnv.GridElements.TERMINAL.value
+        self.grid[tuple(terminal_position)] = GridA.GridElements.TERMINAL.value
 

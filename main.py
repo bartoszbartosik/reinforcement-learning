@@ -1,19 +1,19 @@
 import numpy as np
 from mdp import MDP
-from grid_env import GridEnv
+from envs.grid_a import GridA
 import pprint
 
 
 def main():
 
-    gridworld = GridEnv(5, 5)
+    gridworld = GridA(5, 5)
 
     def gridworld_reward(state: list, action, next_state):
         if next_state == state and (state != [0, 1] and state != [0, 3]):
             return -1
-        elif state == [0, 1] and action in GridEnv.AgentActions:
+        elif state == [0, 1] and action in GridA.AgentActions:
             return 10
-        elif state == [0, 3] and action in GridEnv.AgentActions:
+        elif state == [0, 3] and action in GridA.AgentActions:
             return 5
         else:
             return 0
@@ -23,23 +23,23 @@ def main():
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.RIGHT)))
+    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.RIGHT)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.DOWN)))
+    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.DOWN)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.UP)))
+    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.UP)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.RIGHT)))
+    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.RIGHT)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridEnv.AgentActions.DOWN)))
+    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.DOWN)))
     print(gridworld.grid)
     print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
 

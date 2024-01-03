@@ -1,15 +1,13 @@
-import random
-
 import numpy as np
 
-from grid_env import GridEnv
+from envs.grid_a import GridA
 
 
 class MDP:
 
-    def __init__(self, environment: GridEnv, reward_function, discount_factor):
+    def __init__(self, environment: GridA, reward_function, discount_factor):
         self.environment = environment
-        self.actions = list(GridEnv.AgentActions)
+        self.actions = list(GridA.AgentActions)
         self.reward_function = reward_function
         self.gamma = discount_factor
 
