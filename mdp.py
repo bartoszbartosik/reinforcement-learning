@@ -1,13 +1,13 @@
 import numpy as np
 
-from envs.grid_a import GridA
+from envs.grid import Grid
 
 
 class MDP:
 
-    def __init__(self, environment: GridA, reward_function, discount_factor):
+    def __init__(self, environment: Grid, reward_function, discount_factor):
         self.environment = environment
-        self.actions = list(GridA.AgentActions)
+        self.actions = list(Grid.AgentActions)
         self.reward_function = reward_function
         self.gamma = discount_factor
 
@@ -25,7 +25,6 @@ class MDP:
         self.evaluation_values = np.zeros_like(self.environment.grid)
 
 
-
     def action(self, action):
         next_state = self.environment.get_next_state(self.environment.state.copy(), action)
         reward = self.reward_function(self.environment.state, action, next_state)
@@ -35,6 +34,9 @@ class MDP:
 
     def compute_state_value(self, state):
         if self.environment.grid[tuple(state)] == self.environment.GridElements.OBSTACLE.value:
+            return 0
+
+        if self.environment.grid[tuple(state)] == self.environment.GridElements.TERMINAL.value:
             return 0
 
         max_value = float('-inf')
@@ -66,6 +68,9 @@ class MDP:
         if self.environment.grid[tuple(state)] == self.environment.GridElements.OBSTACLE.value:
             return 0
 
+        if self.environment.grid[tuple(state)] == self.environment.GridElements.TERMINAL.value:
+            return 0
+
         next_state = self.environment.get_next_state(state.copy(), action)
         reward = self.reward_function(state, action, next_state)
         q = reward + self.gamma*max(self.q_values[tuple(next_state)])
@@ -92,6 +97,9 @@ class MDP:
         if self.environment.grid[tuple(state)] == self.environment.GridElements.OBSTACLE.value:
             return 0
 
+        if self.environment.grid[tuple(state)] == self.environment.GridElements.TERMINAL.value:
+            return 0
+
         v = 0
         for pi_a, action in zip(self.policy[tuple(state)], self.environment.AgentActions):
             next_state = self.environment.get_next_state(state.copy(), action)
@@ -100,18 +108,21 @@ class MDP:
 
         return v
 
+
     def policy_evaluation(self):
-        epsilon = 0.0001
+        epsilon = 1e-10
 
         delta = float('inf')
         while delta > epsilon:
             delta = 0
+            evaluation_values_copy = self.evaluation_values.copy()
             for i in range(self.environment.width):
                 for j in range(self.environment.height):
                     v_old = self.evaluation_values[i, j]
                     v_new = self.evaluate_state([i, j])
-                    self.evaluation_values[i, j] = v_new
+                    evaluation_values_copy[i, j] = v_new
                     delta = max(delta, abs(v_new - v_old))
+            self.evaluation_values = evaluation_values_copy.copy()
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #

@@ -1,4 +1,6 @@
 import numpy as np
+
+from envs.grid import Grid
 from mdp import MDP
 from envs.grid_a import GridA
 import pprint
@@ -60,14 +62,21 @@ def main():
     mdp_gridworld.policy_evaluation()
     print(mdp_gridworld.evaluation_values)
 
-    # print(mdp_gridworld.compute_state_values())
-    # print(mdp_gridworld.state_values)
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    # print(mdp_gridworld.state_value2([0,0]))
+    grid = Grid(4, 4)
+    grid.set_terminal([0, 0])
+    grid.set_terminal([3, 3])
+    print(grid.grid)
 
-    # print(mdp_gridworld.policy)
-    # print(mdp_gridworld.policy[GridEnv.AgentActions.UP])
+    def rw(state, action, next_state):
+        return -1
 
+
+    mdp_g = MDP(grid, rw, 1)
+
+    mdp_g.policy_evaluation()
+    print(mdp_g.evaluation_values)
 
 if __name__ == '__main__':
     main()
