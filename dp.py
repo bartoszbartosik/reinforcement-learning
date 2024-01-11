@@ -11,7 +11,97 @@ class DynamicProgramming:
         self.pi = mdp.policy
 
 
-    def compute_state_value(self, state, state_values):
+    def get_optimal_state_value(self):
+        # Initialize state-values matrix
+        v = np.zeros_like(self.env.grid)
+
+        # Solution convergence threshold
+        epsilon = 0.0001
+
+        delta = float('inf')
+        while delta > epsilon:
+            delta = 0
+            for i in range(self.env.width):
+                for j in range(self.env.height):
+                    v_old = v[i, j]
+                    v_new = self.__compute_state_value([i, j], v)
+                    v[i, j] = v_new
+                    delta = max(delta, abs(v_new - v_old))
+
+        return v
+
+
+    def get_optimal_action_value(self):
+        # Initialize action-values tensor
+        q = np.zeros((self.env.width, self.env.height, len(self.actions)))
+
+        # Solution convergence threshold
+        epsilon = 0.0001
+
+        delta = float('inf')
+        while delta > epsilon:
+            delta = 0
+            for i in range(self.env.width):
+                for j in range(self.env.height):
+                    for action in self.env.AgentActions:
+                        q_old = q[i, j][action.value]
+                        q_new = self.__compute_action_value([i, j], action, q)
+                        q[i, j][action.value] = q_new
+                        delta = max(delta, abs(q_new - q_old))
+
+        return q
+
+
+    def policy_evaluation(self):
+        # Initialize state-values matrix
+        v = np.zeros_like(self.env.grid)
+
+        # Solution convergence threshold
+        epsilon = 1e-10
+
+        delta = float('inf')
+        while delta > epsilon:
+            delta = 0
+            for i in range(self.env.width):
+                for j in range(self.env.height):
+                    v_old = v[i, j]
+                    v_new = self.__evaluate_state([i, j], v)
+                    v[i, j] = v_new
+                    delta = max(delta, abs(v_new - v_old))
+
+        return v
+
+
+    def policy_improvement(self, v):
+        policy_stable = True
+        for i in range(self.env.width):
+            for j in range(self.env.height):
+                action_old = np.argmax(self.pi[(i, j)])
+                action_new = self.__improve_policy([i, j], v).value
+
+                self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
+                self.pi[(i, j)][action_new] = 1
+
+                if action_old != action_new:
+                    policy_stable = False
+
+        return policy_stable
+
+
+    def policy_iteration(self):
+        while True:
+            v = self.policy_evaluation()
+            policy_stable = self.policy_improvement(v)
+            if policy_stable:
+                break
+
+        return self.policy_evaluation()
+
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #
+
+    def __compute_state_value(self, state, state_values):
         if self.env.grid[tuple(state)] == self.env.GridElements.OBSTACLE.value:
             return 0
 
@@ -29,27 +119,7 @@ class DynamicProgramming:
         return max_value
 
 
-    def get_optimal_state_value(self):
-        # Initialize state-values matrix
-        v = np.zeros_like(self.env.grid)
-
-        # Solution convergence threshold
-        epsilon = 0.0001
-
-        delta = float('inf')
-        while delta > epsilon:
-            delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    v_old = v[i, j]
-                    v_new = self.compute_state_value([i, j], v)
-                    v[i, j] = v_new
-                    delta = max(delta, abs(v_new - v_old))
-
-        return v
-
-
-    def compute_action_value(self, state, action, q_table):
+    def __compute_action_value(self, state, action, q_table):
         if self.env.grid[tuple(state)] == self.env.GridElements.OBSTACLE.value:
             return 0
 
@@ -63,28 +133,7 @@ class DynamicProgramming:
         return q
 
 
-    def get_optimal_action_value(self):
-        # Initialize action-values tensor
-        q = np.zeros((self.env.width, self.env.height, len(self.actions)))
-
-        # Solution convergence threshold
-        epsilon = 0.0001
-
-        delta = float('inf')
-        while delta > epsilon:
-            delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    for action in self.env.AgentActions:
-                        q_old = q[i, j][action.value]
-                        q_new = self.compute_action_value([i, j], action, q)
-                        q[i, j][action.value] = q_new
-                        delta = max(delta, abs(q_new - q_old))
-
-        return q
-
-
-    def evaluate_state(self, state, state_values):
+    def __evaluate_state(self, state, state_values):
         if self.env.grid[tuple(state)] == self.env.GridElements.OBSTACLE.value:
             return 0
 
@@ -100,27 +149,7 @@ class DynamicProgramming:
         return v
 
 
-    def policy_evaluation(self):
-        # Initialize state-values matrix
-        v = np.zeros_like(self.env.grid)
-
-        # Solution convergence threshold
-        epsilon = 1e-10
-
-        delta = float('inf')
-        while delta > epsilon:
-            delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    v_old = v[i, j]
-                    v_new = self.evaluate_state([i, j], v)
-                    v[i, j] = v_new
-                    delta = max(delta, abs(v_new - v_old))
-
-        return v
-
-
-    def improve_policy(self, state, state_values):
+    def __improve_policy(self, state, state_values):
         max_value = float('-inf')
         max_action = None
         for action in self.actions:
@@ -132,30 +161,3 @@ class DynamicProgramming:
                 max_action = action
 
         return max_action
-
-
-    def policy_improvement(self, v):
-        policy_stable = True
-        for i in range(self.env.width):
-            for j in range(self.env.height):
-                action_old = np.argmax(self.pi[(i, j)])
-                action_new = self.improve_policy([i, j], v).value
-
-                self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
-                self.pi[(i, j)][action_new] = 1
-
-                if action_old != action_new:
-                    policy_stable = False
-
-        return policy_stable
-
-
-    def policy_iteration(self):
-        # Initialize state-values matrix
-        while True:
-            v = self.policy_evaluation()
-            policy_stable = self.policy_improvement(v)
-            if policy_stable:
-                break
-
-        return self.policy_evaluation()
