@@ -42,12 +42,16 @@ def main():
 
     dp = DynamicProgramming(mdp_gridworld)
 
-    print(dp.compute_state_values())
+    print(dp.get_optimal_state_value())
 
     pp = pprint.PrettyPrinter()
-    pp.pprint(dp.compute_action_values())
+    pp.pprint(dp.get_optimal_action_value())
 
     print(mdp_gridworld.policy)
+
+    print(dp.policy_evaluation())
+    print(dp.policy_iteration())
+
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -68,7 +72,12 @@ def main():
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    print(mdp_g.policy)
+    print(dp_g.policy_iteration())
+    for i in range(4):
+        for j in range(4):
+            print('state[{}, {}], pi(state) = {}'.format(i, j, dp_g.pi[i, j]))
+        print()
+    print(dp_g.pi)
 
 if __name__ == '__main__':
     main()

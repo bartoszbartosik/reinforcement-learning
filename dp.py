@@ -29,7 +29,7 @@ class DynamicProgramming:
         return max_value
 
 
-    def compute_state_values(self):
+    def get_optimal_state_value(self):
         # Initialize state-values matrix
         v = np.zeros_like(self.env.grid)
 
@@ -63,7 +63,7 @@ class DynamicProgramming:
         return q
 
 
-    def compute_action_values(self):
+    def get_optimal_action_value(self):
         # Initialize action-values tensor
         q = np.zeros((self.env.width, self.env.height, len(self.actions)))
 
@@ -120,13 +120,13 @@ class DynamicProgramming:
         return v
 
 
-    def improve_action(self, state):
+    def improve_policy(self, state, state_values):
         max_value = float('-inf')
         max_action = None
         for action in self.actions:
             next_state = self.env.get_next_state(state.copy(), action)
             reward = self.reward_function(state, action, next_state)
-            state_value = reward + self.gamma*self.v_values[tuple(next_state)]
+            state_value = reward + self.gamma*state_values[tuple(next_state)]
             if state_value > max_value:
                 max_value = state_value
                 max_action = action
@@ -134,15 +134,28 @@ class DynamicProgramming:
         return max_action
 
 
-    def policy_improvement(self):
-
+    def policy_improvement(self, v):
+        policy_stable = True
         for i in range(self.env.width):
             for j in range(self.env.height):
                 action_old = np.argmax(self.pi[(i, j)])
-                action_new = self.improve_action([i, j]).value
+                action_new = self.improve_policy([i, j], v).value
 
                 self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
                 self.pi[(i, j)][action_new] = 1
 
-                # if action_old != action_new:
-                #     self.policy_evaluation()
+                if action_old != action_new:
+                    policy_stable = False
+
+        return policy_stable
+
+
+    def policy_iteration(self):
+        # Initialize state-values matrix
+        while True:
+            v = self.policy_evaluation()
+            policy_stable = self.policy_improvement(v)
+            if policy_stable:
+                break
+
+        return self.policy_evaluation()
