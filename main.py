@@ -3,6 +3,7 @@ import numpy as np
 from envs.grid import Grid
 from mdp import MDP
 from envs.grid_a import GridA
+from dp import DynamicProgramming
 import pprint
 
 
@@ -23,44 +24,30 @@ def main():
     mdp_gridworld = MDP(gridworld, gridworld_reward, 0.9)
 
     print(gridworld.grid)
-    print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.RIGHT)))
     print(gridworld.grid)
-    print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.DOWN)))
     print(gridworld.grid)
-    print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.UP)))
     print(gridworld.grid)
-    print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.RIGHT)))
     print(gridworld.grid)
-    print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
     print('*action*')
     print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.DOWN)))
     print(gridworld.grid)
-    print('state value for state {}: {}'.format(mdp_gridworld.environment.state, mdp_gridworld.compute_state_value(mdp_gridworld.environment.state)))
 
-    print(mdp_gridworld.v_values)
-    mdp_gridworld.compute_state_values()
+    dp = DynamicProgramming(mdp_gridworld)
 
-    print(np.round(mdp_gridworld.v_values, 1))
-
-    print(mdp_gridworld.q_values)
-    mdp_gridworld.compute_action_values()
+    print(dp.compute_state_values())
 
     pp = pprint.PrettyPrinter()
-
-    pp.pprint(mdp_gridworld.q_values)
+    pp.pprint(dp.compute_action_values())
 
     print(mdp_gridworld.policy)
-
-    mdp_gridworld.policy_evaluation()
-    print(mdp_gridworld.evaluation_values)
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -74,9 +61,14 @@ def main():
 
 
     mdp_g = MDP(grid, rw, 1)
+    dp_g = DynamicProgramming(mdp_g)
 
-    mdp_g.policy_evaluation()
-    print(mdp_g.evaluation_values)
+    print(dp_g.policy_evaluation())
+
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    print(mdp_g.policy)
 
 if __name__ == '__main__':
     main()
