@@ -10,7 +10,7 @@ class GridA(Grid):
         super().__init__(width, height)
 
 
-    def action(self, action: Grid.AgentActions):
+    def action(self, action):
         super().action(action)
 
 
@@ -25,14 +25,14 @@ class GridA(Grid):
             return super().get_next_state(state, action)
 
 
-    def set_agent(self, agent_position: list):
+    def set_agent(self, agent_position: tuple):
         super().set_agent(agent_position)
 
 
-    def set_obstacle(self, obstacle_position: list):
+    def set_obstacle(self, obstacle_position: tuple):
        super().set_obstacle(obstacle_position)
 
 
-    def set_terminal(self, terminal_position: list):
+    def set_terminal(self, terminal_position: tuple):
         super().set_terminal(terminal_position)
 

@@ -14,9 +14,9 @@ def main():
     def gridworld_reward(state: tuple, action, next_state):
         if next_state == state and (state != (0, 1) and state != (0, 3)):
             return -1
-        elif state == (0, 1) and action in GridA.AgentActions:
+        elif state == (0, 1):
             return 10
-        elif state == (0, 3) and action in GridA.AgentActions:
+        elif state == (0, 3):
             return 5
         else:
             return 0
@@ -25,19 +25,19 @@ def main():
 
     print(gridworld.grid)
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.RIGHT)))
+    print('reward: {}'.format(mdp_gridworld.action('RIGHT')))
     print(gridworld.grid)
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.DOWN)))
+    print('reward: {}'.format(mdp_gridworld.action('DOWN')))
     print(gridworld.grid)
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.UP)))
+    print('reward: {}'.format(mdp_gridworld.action('UP')))
     print(gridworld.grid)
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.RIGHT)))
+    print('reward: {}'.format(mdp_gridworld.action('RIGHT')))
     print(gridworld.grid)
     print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action(GridA.AgentActions.DOWN)))
+    print('reward: {}'.format(mdp_gridworld.action('DOWN')))
     print(gridworld.grid)
 
     dp = DynamicProgramming(mdp_gridworld)

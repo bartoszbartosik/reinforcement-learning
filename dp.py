@@ -5,6 +5,7 @@ import mdp as MDP
 class DynamicProgramming:
 
     def __init__(self, mdp: MDP):
+        self.mdp = mdp
         self.env = mdp.environment
         self.actions = mdp.actions
         self.reward_function = mdp.reward_function
@@ -44,10 +45,10 @@ class DynamicProgramming:
             delta = 0
             for i in range(self.env.width):
                 for j in range(self.env.height):
-                    for action in self.env.AgentActions:
-                        q_old = q[i, j][action.value]
+                    for action in self.mdp.actions:
+                        q_old = q[i, j][action]
                         q_new = self.__compute_action_value((i, j), action, q)
-                        q[i, j][action.value] = q_new
+                        q[i, j][action] = q_new
                         delta = max(delta, abs(q_new - q_old))
 
         return q
@@ -80,7 +81,7 @@ class DynamicProgramming:
                     max_action = self.__improve_policy((i, j), v)
                     v[i, j] = v_new
                     self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
-                    self.pi[i, j][max_action.value] = 1
+                    self.pi[i, j][max_action] = 1
                     delta = max(delta, abs(v_new - v_old))
 
         return v, self.pi
@@ -109,7 +110,7 @@ class DynamicProgramming:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #
 
-    def __compute_state_value(self, state, state_values) -> (MDP.Grid.AgentActions, float):
+    def __compute_state_value(self, state, state_values) -> (float):
         if self.env.grid[state] == self.env.GridElements.OBSTACLE.value:
             return 0
 
@@ -118,7 +119,7 @@ class DynamicProgramming:
 
         max_value = float('-inf')
         for action in self.actions:
-            next_state = self.env.get_next_state(state, action)
+            next_state = self.mdp.get_next_state(state, action)
             reward = self.reward_function(state, action, next_state)
             state_value = reward + self.gamma*state_values[next_state]
             if state_value > max_value:
@@ -134,7 +135,7 @@ class DynamicProgramming:
         if self.env.grid[state] == self.env.GridElements.TERMINAL.value:
             return 0
 
-        next_state = self.env.get_next_state(state, action)
+        next_state = self.mdp.get_next_state(state, action)
         reward = self.reward_function(state, action, next_state)
         q = reward + self.gamma*max(q_table[next_state])
 
@@ -149,19 +150,19 @@ class DynamicProgramming:
             return 0
 
         v = 0
-        for pi_a, action in zip(self.pi[state], self.env.AgentActions):
-            next_state = self.env.get_next_state(state, action)
+        for pi_a, action in zip(self.pi[state], self.mdp.actions):
+            next_state = self.mdp.get_next_state(state, action)
             reward = self.reward_function(state, action, next_state)
             v += pi_a * (reward + self.gamma * state_values[next_state])
 
         return v
 
 
-    def __improve_policy(self, state, state_values) -> MDP.Grid.AgentActions:
+    def __improve_policy(self, state, state_values) -> str:
         max_value = float('-inf')
         max_action = None
         for action in self.actions:
-            next_state = self.env.get_next_state(state, action)
+            next_state = self.mdp.get_next_state(state, action)
             reward = self.reward_function(state, action, next_state)
             state_value = reward + self.gamma*state_values[next_state]
             if state_value > max_value:
@@ -176,7 +177,7 @@ class DynamicProgramming:
         for i in range(self.env.width):
             for j in range(self.env.height):
                 action_old = np.argmax(self.pi[(i, j)])
-                action_new = self.__improve_policy([i, j], v).value
+                action_new = self.__improve_policy([i, j], v)
 
                 self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
                 self.pi[(i, j)][action_new] = 1

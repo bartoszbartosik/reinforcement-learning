@@ -7,13 +7,6 @@ from envs.environment import Environment
 
 class Grid(Environment):
 
-    class AgentActions(Environment.AgentActions):
-        UP = 0
-        DOWN = 1
-        LEFT = 2
-        RIGHT = 3
-
-
     # Encode grid elements
     class GridElements(Enum):
         FREE = 0
@@ -23,6 +16,10 @@ class Grid(Environment):
 
 
     def __init__(self, width, height):
+        actions = ('UP', 'DOWN', 'LEFT', 'RIGHT')
+        # Set of actions
+        super().__init__(actions)
+
         # Set dimensions of the grid
         self.width = width      # columns
         self.height = height    # rows
@@ -35,7 +32,7 @@ class Grid(Environment):
         self.grid[self.state] = Grid.GridElements.AGENT.value
 
 
-    def action(self, action: AgentActions):
+    def action(self, action: str):
         # Get the next state
         next_state = self.get_next_state(self.state, action)
 
@@ -52,30 +49,30 @@ class Grid(Environment):
     def get_next_state(self, state: tuple, action):
         state = list(state)
         # Check for obstacles
-        if (state[0] == 0 and action == Grid.AgentActions.UP or
-              state[0] == len(self.grid) - 1 and action == Grid.AgentActions.DOWN or
-              state[1] == 0 and action == Grid.AgentActions.LEFT or
-              state[1] == len(self.grid[0]) - 1 and action == Grid.AgentActions.RIGHT or
-              action == Grid.AgentActions.UP and self.grid[
+        if (state[0] == 0 and action == 'UP' or
+              state[0] == len(self.grid) - 1 and action == 'DOWN' or
+              state[1] == 0 and action == 'LEFT' or
+              state[1] == len(self.grid[0]) - 1 and action == 'RIGHT' or
+              action == 'UP' and self.grid[
                   state[0] - 1, state[1]] == Grid.GridElements.OBSTACLE.value or
-              action == Grid.AgentActions.DOWN and self.grid[
+              action == 'DOWN' and self.grid[
                   state[0] + 1, state[1]] == Grid.GridElements.OBSTACLE.value or
-              action == Grid.AgentActions.LEFT and self.grid[
+              action == 'LEFT' and self.grid[
                   state[0], state[1] - 1] == Grid.GridElements.OBSTACLE.value or
-              action == Grid.AgentActions.RIGHT and self.grid[
+              action == 'RIGHT' and self.grid[
                   state[0], state[1] + 1] == Grid.GridElements.OBSTACLE.value):
             pass
 
         # Update the state
         else:
             match action:
-                case Grid.AgentActions.UP:
+                case 'UP':
                     state[0] -= 1
-                case Grid.AgentActions.DOWN:
+                case 'DOWN':
                     state[0] += 1
-                case Grid.AgentActions.LEFT:
+                case 'LEFT':
                     state[1] -= 1
-                case Grid.AgentActions.RIGHT:
+                case 'RIGHT':
                     state[1] += 1
 
         return tuple(state.copy())

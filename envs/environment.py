@@ -4,10 +4,10 @@ from enum import Enum
 
 class Environment(ABC):
 
-    class AgentActions(Enum):
-        pass
+    def __init__(self, actions):
+        self.actions = actions
 
-    def action(self, action: AgentActions):
+    def action(self, action):
         pass
 
     def get_next_state(self, state, action):
