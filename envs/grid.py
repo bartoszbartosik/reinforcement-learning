@@ -31,17 +31,17 @@ class Grid(Environment):
         self.grid = Grid.GridElements.FREE.value * np.ones(shape=(height, width))
 
         # Initialize the agent position
-        self.state = [0, 0]
-        self.grid[tuple(self.state)] = Grid.GridElements.AGENT.value
+        self.state = (0, 0)
+        self.grid[self.state] = Grid.GridElements.AGENT.value
 
 
     def action(self, action: AgentActions):
         # Get the next state
-        next_state = self.get_next_state(self.state.copy(), action)
+        next_state = self.get_next_state(self.state, action)
 
         # If the next state is valid, perform transition and return True
         if next_state != self.state:
-            self.grid[tuple(next_state)], self.grid[tuple(self.state)] = self.grid[tuple(self.state)], self.grid[tuple(next_state)]
+            self.grid[next_state], self.grid[self.state] = self.grid[self.state], self.grid[next_state]
             self.state = next_state
             return True
 
@@ -49,7 +49,8 @@ class Grid(Environment):
         return False
 
 
-    def get_next_state(self, state, action):
+    def get_next_state(self, state: tuple, action):
+        state = list(state)
         # Check for obstacles
         if (state[0] == 0 and action == Grid.AgentActions.UP or
               state[0] == len(self.grid) - 1 and action == Grid.AgentActions.DOWN or
@@ -77,17 +78,17 @@ class Grid(Environment):
                 case Grid.AgentActions.RIGHT:
                     state[1] += 1
 
-        return state
+        return tuple(state.copy())
 
 
-    def set_agent(self, agent_position: list):
-        self.grid[tuple(self.state)], self.grid[tuple(agent_position)] = self.grid[tuple(agent_position)], self.grid[tuple(self.state)]
+    def set_agent(self, agent_position: tuple):
+        self.grid[self.state], self.grid[agent_position] = self.grid[agent_position], self.grid[self.state]
         self.state = agent_position
 
 
-    def set_obstacle(self, obstacle_position: list):
-        self.grid[tuple(obstacle_position)] = Grid.GridElements.OBSTACLE.value
+    def set_obstacle(self, obstacle_position: tuple):
+        self.grid[obstacle_position] = Grid.GridElements.OBSTACLE.value
 
 
-    def set_terminal(self, terminal_position: list):
-        self.grid[tuple(terminal_position)] = Grid.GridElements.TERMINAL.value
+    def set_terminal(self, terminal_position: tuple):
+        self.grid[terminal_position] = Grid.GridElements.TERMINAL.value

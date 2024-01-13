@@ -16,10 +16,10 @@ class GridA(Grid):
 
     def get_next_state(self, state, action):
         # Perform transition to a specific next state if in given state
-        if state == [0, 1]:
-            return [4, 1]
-        elif state == [0, 3]:
-            return [2, 3]
+        if state == (0, 1):
+            return 4, 1
+        elif state == (0, 3):
+            return 2, 3
         # Else perform normal transition
         else:
             return super().get_next_state(state, action)

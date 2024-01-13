@@ -16,7 +16,7 @@ class MDP:
 
 
     def action(self, action):
-        next_state = self.environment.get_next_state(self.environment.state.copy(), action)
+        next_state = self.environment.get_next_state(self.environment.state, action)
         reward = self.reward_function(self.environment.state, action, next_state)
         self.environment.action(action)
         return reward

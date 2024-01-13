@@ -11,12 +11,12 @@ def main():
 
     gridworld = GridA(5, 5)
 
-    def gridworld_reward(state: list, action, next_state):
-        if next_state == state and (state != [0, 1] and state != [0, 3]):
+    def gridworld_reward(state: tuple, action, next_state):
+        if next_state == state and (state != (0, 1) and state != (0, 3)):
             return -1
-        elif state == [0, 1] and action in GridA.AgentActions:
+        elif state == (0, 1) and action in GridA.AgentActions:
             return 10
-        elif state == [0, 3] and action in GridA.AgentActions:
+        elif state == (0, 3) and action in GridA.AgentActions:
             return 5
         else:
             return 0
@@ -60,8 +60,8 @@ def main():
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     grid = Grid(4, 4)
-    grid.set_terminal([0, 0])
-    grid.set_terminal([3, 3])
+    grid.set_terminal((0, 0))
+    grid.set_terminal((3, 3))
     print(grid.grid)
 
     def rw(state, action, next_state):
@@ -73,7 +73,8 @@ def main():
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
+    print('Equiprobable policy evaluation:')
+    print(dp_g.policy_evaluation())
     print(dp_g.policy_iteration())
     for i in range(4):
         for j in range(4):
@@ -81,5 +82,6 @@ def main():
         print()
     print(dp_g.pi)
 
+    print(dp_g.value_iteration())
 if __name__ == '__main__':
     main()
