@@ -11,6 +11,7 @@ class MDP:
         self.reward_function = reward_function
         self.gamma = discount_factor
 
+        # Initialize as equiprobable random policy
         self.policy = len(self.environment.AgentActions)**(-1)*np.ones((self.environment.width, self.environment.height, len(self.actions)))
 
 

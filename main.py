@@ -42,15 +42,19 @@ def main():
 
     dp = DynamicProgramming(mdp_gridworld)
 
+    print('Optimal state-values:')
     print(dp.get_optimal_state_value())
+    print('Optimal action-values:')
+    print(dp.get_optimal_action_value())
 
-    pp = pprint.PrettyPrinter()
-    pp.pprint(dp.get_optimal_action_value())
-
-    print(mdp_gridworld.policy)
-
+    print('Equiprobable policy evaluation:')
     print(dp.policy_evaluation())
+    print('Optimal state-values and policy using value iteration:')
+    print(dp.value_iteration())
+    print('Optimal state-values and policy using policy iteration:')
     print(dp.policy_iteration())
+
+
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -66,8 +70,6 @@ def main():
 
     mdp_g = MDP(grid, rw, 1)
     dp_g = DynamicProgramming(mdp_g)
-
-    print(dp_g.policy_evaluation())
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
