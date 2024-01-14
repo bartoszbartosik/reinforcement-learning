@@ -15,7 +15,7 @@ class Grid(Environment):
         TERMINAL = 4
 
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, terminals=None, obstacles=None):
         # Set of actions
         actions = ('UP', 'DOWN', 'LEFT', 'RIGHT')
 
@@ -30,7 +30,20 @@ class Grid(Environment):
         self.state = (0, 0)
         self.grid[self.state] = Grid.GridElements.AGENT.value
 
-        super().__init__(actions, states=np.zeros_like(self.grid))
+        # Apply terminal positions
+        if terminals is not None:
+            for terminal in terminals:
+                self.grid[terminal] = Grid.GridElements.TERMINAL.value
+
+        # Apply obstacle positions
+        if obstacles is not None:
+            for obstacle in obstacles:
+                self.grid[obstacle] = Grid.GridElements.OBSTACLE.value
+
+        super().__init__(actions,
+                         states=[(i, j) for i in range(height) for j in range(width)],
+                         terminal_states=terminals,
+                         obstacle_states=obstacles)
 
 
     def action(self, action: str):

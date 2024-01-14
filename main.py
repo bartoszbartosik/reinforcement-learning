@@ -10,12 +10,12 @@ from dp import DynamicProgramming
 def main():
 
     gridworld = GridA(5, 5)
-
     def gridworld_reward(state: tuple, action, next_state):
         if next_state == state and (state != (0, 1) and state != (0, 3)):
             return -1
         elif state == (0, 1):
             return 10
+
         elif state == (0, 3):
             return 5
         else:

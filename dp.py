@@ -15,7 +15,7 @@ class DynamicProgramming:
 
     def get_optimal_state_value(self) -> np.ndarray:
         # Initialize state-values matrix
-        v = np.zeros_like(self.env.grid)
+        v = np.zeros_like(self.mdp.states, dtype=float)
 
         # Solution convergence threshold
         epsilon = 1e-10
@@ -23,12 +23,11 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    v_old = v[i, j]
-                    v_new = self.__compute_state_value((i, j), v)
-                    v[i, j] = v_new
-                    delta = max(delta, abs(v_new - v_old))
+            for state in self.mdp.states:
+                v_old = v[state]
+                v_new = self.__compute_state_value(state, v)
+                v[state] = v_new
+                delta = max(delta, abs(v_new - v_old))
 
         return v
 
@@ -43,13 +42,12 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    for action in self.mdp.actions:
-                        q_old = q[i, j][action]
-                        q_new = self.__compute_action_value((i, j), action, q)
-                        q[i, j][action] = q_new
-                        delta = max(delta, abs(q_new - q_old))
+            for state in self.env.states:
+                for action in self.mdp.actions:
+                    q_old = q[state][action]
+                    q_new = self.__compute_action_value(state, action, q)
+                    q[state][action] = q_new
+                    delta = max(delta, abs(q_new - q_old))
 
         return q
 
@@ -74,15 +72,14 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    v_old = v[i, j]
-                    v_new = self.__compute_state_value((i, j), v)
-                    max_action = self.__improve_policy((i, j), v)
-                    v[i, j] = v_new
-                    self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
-                    self.pi[i, j][max_action] = 1
-                    delta = max(delta, abs(v_new - v_old))
+            for index, state in enumerate(self.env.states):
+                v_old = v[state]
+                v_new = self.__compute_state_value(state, v)
+                max_action = self.__improve_policy(state, v)
+                v[state] = v_new
+                self.pi[index] = np.zeros_like(self.pi[index])
+                self.pi[index][max_action] = 1
+                delta = max(delta, abs(v_new - v_old))
 
         return v, self.pi
 
@@ -97,12 +94,11 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for i in range(self.env.width):
-                for j in range(self.env.height):
-                    v_old = v[i, j]
-                    v_new = self.__evaluate_state((i, j), v)
-                    v[i, j] = v_new
-                    delta = max(delta, abs(v_new - v_old))
+            for state in self.env.states:
+                v_old = v[state]
+                v_new = self.__evaluate_state(state, v)
+                v[state] = v_new
+                delta = max(delta, abs(v_new - v_old))
 
         return v
 
@@ -111,16 +107,16 @@ class DynamicProgramming:
     # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #
 
     def __compute_state_value(self, state, state_values) -> (float):
-        if self.env.grid[state] == self.env.GridElements.OBSTACLE.value:
+        if state in self.mdp.terminal_states:
             return 0
 
-        if self.env.grid[state] == self.env.GridElements.TERMINAL.value:
+        if state in self.mdp.obstacle_states:
             return 0
 
         max_value = float('-inf')
         for action in self.actions:
             next_state = self.mdp.get_next_state(state, action)
-            reward = self.reward_function(state, action, next_state)
+            reward = self.reward_function(self.env.states[state], self.env.actions[action], self.env.states[next_state])
             state_value = reward + self.gamma*state_values[next_state]
             if state_value > max_value:
                 max_value = state_value
@@ -150,7 +146,8 @@ class DynamicProgramming:
             return 0
 
         v = 0
-        for pi_a, action in zip(self.pi[state], self.mdp.actions):
+        for action in self.mdp.actions:
+            pi_a = self.pi[self.env.states.index(state)][action]
             next_state = self.mdp.get_next_state(state, action)
             reward = self.reward_function(state, action, next_state)
             v += pi_a * (reward + self.gamma * state_values[next_state])
