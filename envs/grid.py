@@ -16,9 +16,8 @@ class Grid(Environment):
 
 
     def __init__(self, width, height):
-        actions = ('UP', 'DOWN', 'LEFT', 'RIGHT')
         # Set of actions
-        super().__init__(actions)
+        actions = ('UP', 'DOWN', 'LEFT', 'RIGHT')
 
         # Set dimensions of the grid
         self.width = width      # columns
@@ -30,6 +29,8 @@ class Grid(Environment):
         # Initialize the agent position
         self.state = (0, 0)
         self.grid[self.state] = Grid.GridElements.AGENT.value
+
+        super().__init__(actions, states=np.zeros_like(self.grid))
 
 
     def action(self, action: str):

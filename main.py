@@ -1,10 +1,10 @@
 import numpy as np
 
 from envs.grid import Grid
-from mdp import MDP
 from envs.grid_a import GridA
+from envs.gambler_problem import GamblerProblem
+from mdp import MDP
 from dp import DynamicProgramming
-import pprint
 
 
 def main():
@@ -55,8 +55,6 @@ def main():
     print(dp.policy_iteration())
 
 
-
-
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     grid = Grid(4, 4)
@@ -83,5 +81,24 @@ def main():
     print(dp_g.pi)
 
     print(dp_g.value_iteration())
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    gp = GamblerProblem(100, heads_probability = 0.4)
+    print(gp.actions)
+    print(gp.states)
+
+    def gambler_reward(state, action, next_state):
+        if next_state >= 100:
+            return 1
+        else:
+            return 0
+
+    mdp_gp = MDP(gp, gambler_reward, 1)
+    dp_gp = DynamicProgramming(mdp_gp)
+    print(dp_gp.policy_iteration())
+
+
+
 if __name__ == '__main__':
     main()

@@ -1,18 +1,18 @@
 import numpy as np
 
-from envs.grid import Grid
+from envs.environment import Environment
 
 
 class MDP:
 
-    def __init__(self, environment: Grid, reward_function, discount_factor):
+    def __init__(self, environment: Environment, reward_function, discount_factor):
         self.environment = environment
         self.actions = [i for i in range(len(environment.actions))]
         self.reward_function = reward_function
         self.gamma = discount_factor
 
         # Initialize as equiprobable random policy
-        self.policy = len(self.actions)**(-1)*np.ones((self.environment.width, self.environment.height, len(self.actions)))
+        self.policy = len(self.actions)**(-1)*np.ones((np.append(self.environment.states.shape, len(self.actions))))
 
 
     def action(self, action):
