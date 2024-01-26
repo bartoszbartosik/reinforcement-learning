@@ -1,15 +1,13 @@
-import numpy as np
-
 from envs.grid import Grid
 from envs.grid_a import GridA
 from envs.gambler_problem import GamblerProblem
 from mdp import MDP
-from dp import DynamicProgramming
+import methods.dynamic_programming as dp
 
 
 def main():
 
-    gridworld = GridA(5, 5)
+    grid_a = GridA(5, 5)
 
     def gridworld_reward(state: tuple, action, next_state):
         if next_state == state and (state != (0, 1) and state != (0, 3)):
@@ -21,38 +19,19 @@ def main():
         else:
             return 0
 
-    mdp_gridworld = MDP(gridworld, gridworld_reward, 0.9)
-
-    print(gridworld.grid)
-    print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action('RIGHT')))
-    print(gridworld.grid)
-    print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action('DOWN')))
-    print(gridworld.grid)
-    print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action('UP')))
-    print(gridworld.grid)
-    print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action('RIGHT')))
-    print(gridworld.grid)
-    print('*action*')
-    print('reward: {}'.format(mdp_gridworld.action('DOWN')))
-    print(gridworld.grid)
-
-    dp = DynamicProgramming(mdp_gridworld)
+    mdp_grid_a = MDP(grid_a, gridworld_reward, 0.9)
 
     print('Optimal state-values:')
-    print(dp.get_optimal_state_value())
+    print(dp.get_optimal_state_value(mdp_grid_a))
     print('Optimal action-values:')
-    print(dp.get_optimal_action_value())
+    print(dp.get_optimal_action_value(mdp_grid_a))
 
     print('Equiprobable policy evaluation:')
-    print(dp.policy_evaluation())
+    print(dp.policy_evaluation(mdp_grid_a))
     print('Optimal state-values and policy using value iteration:')
-    print(dp.value_iteration())
+    print(dp.value_iteration(mdp_grid_a))
     print('Optimal state-values and policy using policy iteration:')
-    print(dp.policy_iteration())
+    print(dp.policy_iteration(mdp_grid_a))
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -66,21 +45,19 @@ def main():
         return -1
 
 
-    mdp_g = MDP(grid, rw, 1)
-    dp_g = DynamicProgramming(mdp_g)
-
+    mdp_grid = MDP(grid, rw, 1)
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     print('Equiprobable policy evaluation:')
-    print(dp_g.policy_evaluation())
-    print(dp_g.policy_iteration())
+    print(dp.policy_evaluation(mdp_grid))
+    print(dp.policy_iteration(mdp_grid))
     for i in range(4):
         for j in range(4):
-            print('state[{}, {}], pi(state) = {}'.format(i, j, dp_g.pi[i, j]))
+            print('state[{}, {}], pi(state) = {}'.format(i, j, mdp_grid.policy[i, j]))
         print()
-    print(dp_g.pi)
+    print(mdp_grid.policy)
 
-    print(dp_g.value_iteration())
+    print(dp.value_iteration(mdp_grid))
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -95,8 +72,7 @@ def main():
             return 0
 
     mdp_gp = MDP(gp, gambler_reward, 1)
-    dp_gp = DynamicProgramming(mdp_gp)
-    print(dp_gp.policy_iteration())
+    print(dp.policy_iteration(mdp_gp))
 
 
 
