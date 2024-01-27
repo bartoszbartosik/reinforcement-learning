@@ -1,9 +1,7 @@
 import unittest
 
-import numpy as np
-
 from envs.grid_a import GridA
-from mdp import MDP
+from mdp.mdp import MDP
 
 class TestMDP(unittest.TestCase):
 

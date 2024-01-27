@@ -1,6 +1,5 @@
 import numpy as np
-
-import mdp as MDP
+from mdp.mdp import MDP
 
 # TODO: remove policy attribute from MDP class
 
