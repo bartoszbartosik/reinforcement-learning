@@ -15,11 +15,16 @@ class MDP:
         self.policy = len(self.actions)**(-1)*np.ones((np.append(self.environment.states.shape, len(self.actions))))
 
 
+    def follow_policy(self):
+        pass
+
+
     def action(self, action):
         next_state = self.environment.get_next_state(self.environment.state, action)
         reward = self.reward_function(self.environment.state, action, next_state)
         self.environment.action(action)
         return reward
+
 
     def get_next_state(self, state, action):
         return self.environment.get_next_state(state, self.environment.actions[action])

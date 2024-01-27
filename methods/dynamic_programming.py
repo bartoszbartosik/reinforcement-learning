@@ -2,6 +2,7 @@ import numpy as np
 
 import mdp as MDP
 
+# TODO: remove policy attribute from MDP class
 
 def get_optimal_state_value(mdp: MDP) -> np.ndarray:
     # Initialize state-values matrix

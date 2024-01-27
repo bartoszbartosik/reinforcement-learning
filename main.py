@@ -1,3 +1,5 @@
+import numpy as np
+
 from envs.grid import Grid
 from envs.grid_a import GridA
 from envs.gambler_problem import GamblerProblem
@@ -22,7 +24,7 @@ def main():
     mdp_grid_a = MDP(grid_a, gridworld_reward, 0.9)
 
     print('Optimal state-values:')
-    print(dp.get_optimal_state_value(mdp_grid_a))
+    print(np.round(dp.get_optimal_state_value(mdp_grid_a), 1))
     print('Optimal action-values:')
     print(dp.get_optimal_action_value(mdp_grid_a))
 

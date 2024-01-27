@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 
+from envs.grid_a import GridA
 from mdp import MDP
 
 class TestMDP(unittest.TestCase):
@@ -9,27 +10,27 @@ class TestMDP(unittest.TestCase):
 
     def setUp(self):
 
-        def reward_function(env, valid):
-            if valid:
-                if env[0, 1] == 1:
-                    return 10
+        grid_a = GridA(5, 5)
+
+        def gridworld_reward(state: tuple, action, next_state):
+            if next_state == state and (state != (0, 1) and state != (0, 3)):
+                return -1
+            elif state == (0, 1):
+                return 10
+            elif state == (0, 3):
+                return 5
+            else:
                 return 0
-            return -10
 
-        environment = np.array([[0, 3, 0, 0, 0],
-                                [0, 0, 0, 0, 0],
-                                [2, 2, 2, 0, 0],
-                                [1, 0, 0, 0, 0]])
-
-        actions = ('l', 'r', 'u', 'd')
-
-        self.mdp = MDP(environment, actions, reward_function, agent_encoding=1, obstacle_encoding=2)
+        self.mdp_grid_a = MDP(grid_a, gridworld_reward, 0.9)
 
     def test_rewards(self):
-        reward = self.mdp.take_action('r')
+        reward = self.mdp_grid_a.action(self.mdp_grid_a.environment.actions[3])
         self.assertEqual(reward, 0)
-        print('Action reward: {}'.format(reward))
-        print('Environment:\n{}'.format(self.mdp.environment))
+        reward = self.mdp_grid_a.action(self.mdp_grid_a.environment.actions[3])
+        self.assertEqual(reward, 10)
+        reward = self.mdp_grid_a.action(self.mdp_grid_a.environment.actions[1])
+        self.assertEqual(reward, -1)
 
 
 
