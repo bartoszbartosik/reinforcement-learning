@@ -162,22 +162,6 @@ def __improve_policy(mdp: MDP, state, state_values) -> str:
 
 def __policy_improvement(mdp: MDP, v: np.ndarray) -> bool:
     policy_stable = True
-    for i in range(mdp.environment.width):
-        for j in range(mdp.environment.height):
-            action_old = np.argmax(mdp.policy[(i, j)])
-            action_new = __improve_policy(mdp, [i, j], v)
-
-            mdp.policy[(i, j)] = np.zeros_like(mdp.policy[(i, j)])
-            mdp.policy[(i, j)][action_new] = 1
-
-            if action_old != action_new:
-                policy_stable = False
-
-    return policy_stable
-
-
-def __policy_improvement(mdp: MDP, v: np.ndarray) -> bool:
-    policy_stable = True
     for state in mdp.states:
         action_old = np.argmax(mdp.policy[state])
         action_new = __improve_policy(mdp, state, v)
