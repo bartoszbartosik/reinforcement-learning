@@ -9,8 +9,8 @@ class GamblerProblem(Environment):
         self.ph = heads_probability
         self.state = int(capital/2)
 
-        states = np.arange(1, capital+1, 1)
-        actions = np.arange(0, min(self.state, capital - self.state), 1)
+        states = list(np.arange(1, capital+1, 1))
+        actions = list(np.arange(0, min(self.state, capital - self.state), 1))
         super().__init__(actions, states)
 
     def action(self, action):
