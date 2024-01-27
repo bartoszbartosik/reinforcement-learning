@@ -38,9 +38,7 @@ def main():
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    grid = Grid(4, 4)
-    grid.set_terminal((0, 0))
-    grid.set_terminal((3, 3))
+    grid = Grid(4, 4, terminals=[(0, 0), (3, 3)])
     print(grid.grid)
 
     def rw(state, action, next_state):

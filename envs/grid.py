@@ -15,11 +15,11 @@ class Grid(Environment):
         TERMINAL = 4
 
 
-    def __init__(self, width, height):
-        super().__init__(
-            actions=('UP', 'DOWN', 'LEFT', 'RIGHT'),
-            states=np.zeros((height, width))
-        )
+    def __init__(self, width, height, terminals=None, obstacles=None):
+        super().__init__(actions=('UP', 'DOWN', 'LEFT', 'RIGHT'),
+                         states=[(i, j) for i in range(height) for j in range(width)],
+                         terminal_states=terminals,
+                         obstacle_states=obstacles)
 
         # Set dimensions of the grid
         self.width = width      # columns
@@ -31,6 +31,16 @@ class Grid(Environment):
         # Initialize the agent position
         self.state = (0, 0)
         self.grid[self.state] = Grid.GridElements.AGENT.value
+
+        # Apply terminal positions
+        if terminals is not None:
+            for terminal in terminals:
+                self.grid[terminal] = Grid.GridElements.TERMINAL.value
+
+        # Apply obstacle positions
+        if obstacles is not None:
+            for obstacle in obstacles:
+                self.grid[obstacle] = Grid.GridElements.OBSTACLE.value
 
 
     def action(self, action: str):

@@ -6,7 +6,7 @@ import mdp as MDP
 
 def get_optimal_state_value(mdp: MDP) -> np.ndarray:
     # Initialize state-values matrix
-    v = np.zeros_like(mdp.environment.grid)
+    v = np.zeros_like(mdp.states, dtype=float)
 
     # Solution convergence threshold
     epsilon = 1e-10
@@ -14,19 +14,18 @@ def get_optimal_state_value(mdp: MDP) -> np.ndarray:
     delta = float('inf')
     while delta > epsilon:
         delta = 0
-        for i in range(mdp.environment.width):
-            for j in range(mdp.environment.height):
-                v_old = v[i, j]
-                v_new = __compute_state_value(mdp,(i, j), v)
-                v[i, j] = v_new
-                delta = max(delta, abs(v_new - v_old))
+        for state in mdp.states:
+            v_old = v[state]
+            v_new = __compute_state_value(mdp, state, v)
+            v[state] = v_new
+            delta = max(delta, abs(v_new - v_old))
 
     return v
 
 
 def get_optimal_action_value(mdp: MDP) -> np.ndarray:
     # Initialize action-values tensor
-    q = np.zeros((mdp.environment.width, mdp.environment.height, len(mdp.actions)))
+    q = np.zeros((len(mdp.states), len(mdp.actions)))
 
     # Solution convergence threshold
     epsilon = 1e-10
@@ -34,13 +33,12 @@ def get_optimal_action_value(mdp: MDP) -> np.ndarray:
     delta = float('inf')
     while delta > epsilon:
         delta = 0
-        for i in range(mdp.environment.width):
-            for j in range(mdp.environment.height):
-                for action in mdp.actions:
-                    q_old = q[i, j][action]
-                    q_new = __compute_action_value(mdp, (i, j), action, q)
-                    q[i, j][action] = q_new
-                    delta = max(delta, abs(q_new - q_old))
+        for state in mdp.states:
+            for action in mdp.actions:
+                q_old = q[state][action]
+                q_new = __compute_action_value(mdp, state, action, q)
+                q[state][action] = q_new
+                delta = max(delta, abs(q_new - q_old))
 
     return q
 
@@ -57,7 +55,7 @@ def policy_iteration(mdp: MDP) -> (np.ndarray, np.ndarray):
 
 def value_iteration(mdp: MDP) -> (np.ndarray, np.ndarray):
     # Initialize state-values matrix
-    v = np.zeros_like(mdp.environment.grid)
+    v = np.zeros_like(mdp.states, dtype=float)
 
     # Solution convergence threshold
     epsilon = 1e-10
@@ -65,22 +63,21 @@ def value_iteration(mdp: MDP) -> (np.ndarray, np.ndarray):
     delta = float('inf')
     while delta > epsilon:
         delta = 0
-        for i in range(mdp.environment.width):
-            for j in range(mdp.environment.height):
-                v_old = v[i, j]
-                v_new = __compute_state_value(mdp, (i, j), v)
-                max_action = __improve_policy(mdp, (i, j), v)
-                v[i, j] = v_new
-                mdp.policy[(i, j)] = np.zeros_like(mdp.policy[(i, j)])
-                mdp.policy[i, j][max_action] = 1
-                delta = max(delta, abs(v_new - v_old))
+        for index, state in enumerate(mdp.states):
+            v_old = v[state]
+            v_new = __compute_state_value(mdp, state, v)
+            max_action = __improve_policy(mdp, state, v)
+            v[state] = v_new
+            mdp.policy[index] = np.zeros_like(mdp.policy[index])
+            mdp.policy[index][max_action] = 1
+            delta = max(delta, abs(v_new - v_old))
 
     return v, mdp.policy
 
 
-def policy_evaluation(mdp) -> np.ndarray:
+def policy_evaluation(mdp: MDP) -> np.ndarray:
     # Initialize state-values matrix
-    v = np.zeros_like(mdp.environment.grid)
+    v = np.zeros_like(mdp.states, dtype=float)
 
     # Solution convergence threshold
     epsilon = 1e-10
@@ -88,12 +85,11 @@ def policy_evaluation(mdp) -> np.ndarray:
     delta = float('inf')
     while delta > epsilon:
         delta = 0
-        for i in range(mdp.environment.width):
-            for j in range(mdp.environment.height):
-                v_old = v[i, j]
-                v_new = __evaluate_state(mdp, (i, j), v)
-                v[i, j] = v_new
-                delta = max(delta, abs(v_new - v_old))
+        for state in mdp.states:
+            v_old = v[state]
+            v_new = __evaluate_state(mdp, state, v)
+            v[state] = v_new
+            delta = max(delta, abs(v_new - v_old))
 
     return v
 
@@ -101,18 +97,18 @@ def policy_evaluation(mdp) -> np.ndarray:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #
 
-def __compute_state_value(mdp, state, state_values) -> float:
-    if mdp.environment.grid[state] == mdp.environment.GridElements.OBSTACLE.value:
+def __compute_state_value(mdp: MDP, state, state_values) -> float:
+    if state in mdp.terminal_states:
         return 0
 
-    if mdp.environment.grid[state] == mdp.environment.GridElements.TERMINAL.value:
+    if state in mdp.obstacle_states:
         return 0
 
     max_value = float('-inf')
     for action in mdp.actions:
         next_state = mdp.get_next_state(state, action)
-        reward = mdp.reward_function(state, action, next_state)
-        state_value = reward + mdp.gamma * state_values[next_state]
+        reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+        state_value = reward + mdp.gamma*state_values[next_state]
         if state_value > max_value:
             max_value = state_value
 
@@ -120,30 +116,31 @@ def __compute_state_value(mdp, state, state_values) -> float:
 
 
 def __compute_action_value(mdp: MDP, state, action, q_table) -> float:
-    if mdp.environment.grid[state] == mdp.environment.GridElements.OBSTACLE.value:
+    if state in mdp.terminal_states:
         return 0
 
-    if mdp.environment.grid[state] == mdp.environment.GridElements.TERMINAL.value:
+    if state in mdp.obstacle_states:
         return 0
 
     next_state = mdp.get_next_state(state, action)
-    reward = mdp.reward_function(state, action, next_state)
-    q = reward + mdp.gamma * max(q_table[next_state])
+    reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+    q = reward + mdp.gamma*max(q_table[next_state])
 
     return q
 
 
 def __evaluate_state(mdp: MDP, state, state_values) -> float:
-    if mdp.environment.grid[state] == mdp.environment.GridElements.OBSTACLE.value:
+    if state in mdp.terminal_states:
         return 0
 
-    if mdp.environment.grid[state] == mdp.environment.GridElements.TERMINAL.value:
+    if state in mdp.obstacle_states:
         return 0
 
     v = 0
-    for pi_a, action in zip(mdp.policy[state], mdp.actions):
+    for action in mdp.actions:
+        pi_a = mdp.policy[state][action]
         next_state = mdp.get_next_state(state, action)
-        reward = mdp.reward_function(state, action, next_state)
+        reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
         v += pi_a * (reward + mdp.gamma * state_values[next_state])
 
     return v
@@ -154,8 +151,8 @@ def __improve_policy(mdp: MDP, state, state_values) -> str:
     max_action = None
     for action in mdp.actions:
         next_state = mdp.get_next_state(state, action)
-        reward = mdp.reward_function(state, action, next_state)
-        state_value = reward + mdp.gamma * state_values[next_state]
+        reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+        state_value = reward + mdp.gamma*state_values[next_state]
         if state_value > max_value:
             max_value = state_value
             max_action = action
@@ -175,6 +172,21 @@ def __policy_improvement(mdp: MDP, v: np.ndarray) -> bool:
 
             if action_old != action_new:
                 policy_stable = False
+
+    return policy_stable
+
+
+def __policy_improvement(mdp: MDP, v: np.ndarray) -> bool:
+    policy_stable = True
+    for state in mdp.states:
+        action_old = np.argmax(mdp.policy[state])
+        action_new = __improve_policy(mdp, state, v)
+
+        mdp.policy[state] = np.zeros_like(mdp.policy[state])
+        mdp.policy[state][action_new] = 1
+
+        if action_old != action_new:
+            policy_stable = False
 
     return policy_stable
 
