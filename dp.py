@@ -34,7 +34,7 @@ class DynamicProgramming:
 
     def get_optimal_action_value(self) -> np.ndarray:
         # Initialize action-values tensor
-        q = np.zeros((self.env.width, self.env.height, len(self.actions)))
+        q = np.zeros((len(self.mdp.states), len(self.actions)))
 
         # Solution convergence threshold
         epsilon = 1e-10
@@ -42,7 +42,7 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for state in self.env.states:
+            for state in self.mdp.states:
                 for action in self.mdp.actions:
                     q_old = q[state][action]
                     q_new = self.__compute_action_value(state, action, q)
@@ -125,14 +125,14 @@ class DynamicProgramming:
 
 
     def __compute_action_value(self, state, action, q_table) -> float:
-        if self.env.grid[state] == self.env.GridElements.OBSTACLE.value:
+        if state in self.mdp.terminal_states:
             return 0
 
-        if self.env.grid[state] == self.env.GridElements.TERMINAL.value:
+        if state in self.mdp.obstacle_states:
             return 0
 
         next_state = self.mdp.get_next_state(state, action)
-        reward = self.reward_function(state, action, next_state)
+        reward = self.reward_function(self.env.states[state], self.env.actions[action], self.env.states[next_state])
         q = reward + self.gamma*max(q_table[next_state])
 
         return q

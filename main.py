@@ -15,7 +15,6 @@ def main():
             return -1
         elif state == (0, 1):
             return 10
-
         elif state == (0, 3):
             return 5
         else:

@@ -16,8 +16,10 @@ class Grid(Environment):
 
 
     def __init__(self, width, height, terminals=None, obstacles=None):
-        # Set of actions
-        actions = ('UP', 'DOWN', 'LEFT', 'RIGHT')
+        super().__init__(actions=('UP', 'DOWN', 'LEFT', 'RIGHT'),
+                         states=[(i, j) for i in range(height) for j in range(width)],
+                         terminal_states=terminals,
+                         obstacle_states=obstacles)
 
         # Set dimensions of the grid
         self.width = width      # columns
@@ -39,11 +41,6 @@ class Grid(Environment):
         if obstacles is not None:
             for obstacle in obstacles:
                 self.grid[obstacle] = Grid.GridElements.OBSTACLE.value
-
-        super().__init__(actions,
-                         states=[(i, j) for i in range(height) for j in range(width)],
-                         terminal_states=terminals,
-                         obstacle_states=obstacles)
 
 
     def action(self, action: str):
