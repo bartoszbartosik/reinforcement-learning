@@ -64,7 +64,7 @@ class DynamicProgramming:
 
     def value_iteration(self) -> (np.ndarray, np.ndarray):
         # Initialize state-values matrix
-        v = np.zeros_like(self.env.grid)
+        v = np.zeros_like(self.mdp.states, dtype=float)
 
         # Solution convergence threshold
         epsilon = 1e-10
@@ -72,7 +72,7 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for index, state in enumerate(self.env.states):
+            for index, state in enumerate(self.mdp.states):
                 v_old = v[state]
                 v_new = self.__compute_state_value(state, v)
                 max_action = self.__improve_policy(state, v)
@@ -86,7 +86,7 @@ class DynamicProgramming:
 
     def policy_evaluation(self) -> np.ndarray:
         # Initialize state-values matrix
-        v = np.zeros_like(self.env.grid)
+        v = np.zeros_like(self.mdp.states, dtype=float)
 
         # Solution convergence threshold
         epsilon = 1e-10
@@ -94,7 +94,7 @@ class DynamicProgramming:
         delta = float('inf')
         while delta > epsilon:
             delta = 0
-            for state in self.env.states:
+            for state in self.mdp.states:
                 v_old = v[state]
                 v_new = self.__evaluate_state(state, v)
                 v[state] = v_new
@@ -139,17 +139,17 @@ class DynamicProgramming:
 
 
     def __evaluate_state(self, state, state_values) -> float:
-        if self.env.grid[state] == self.env.GridElements.OBSTACLE.value:
+        if state in self.mdp.terminal_states:
             return 0
 
-        if self.env.grid[state] == self.env.GridElements.TERMINAL.value:
+        if state in self.mdp.obstacle_states:
             return 0
 
         v = 0
         for action in self.mdp.actions:
-            pi_a = self.pi[self.env.states.index(state)][action]
+            pi_a = self.pi[state][action]
             next_state = self.mdp.get_next_state(state, action)
-            reward = self.reward_function(state, action, next_state)
+            reward = self.reward_function(self.env.states[state], self.env.actions[action], self.env.states[next_state])
             v += pi_a * (reward + self.gamma * state_values[next_state])
 
         return v
@@ -160,7 +160,7 @@ class DynamicProgramming:
         max_action = None
         for action in self.actions:
             next_state = self.mdp.get_next_state(state, action)
-            reward = self.reward_function(state, action, next_state)
+            reward = self.reward_function(self.env.states[state], self.env.actions[action], self.env.states[next_state])
             state_value = reward + self.gamma*state_values[next_state]
             if state_value > max_value:
                 max_value = state_value
@@ -171,15 +171,14 @@ class DynamicProgramming:
 
     def __policy_improvement(self, v: np.ndarray) -> bool:
         policy_stable = True
-        for i in range(self.env.width):
-            for j in range(self.env.height):
-                action_old = np.argmax(self.pi[(i, j)])
-                action_new = self.__improve_policy([i, j], v)
+        for state in self.mdp.states:
+            action_old = np.argmax(self.pi[state])
+            action_new = self.__improve_policy(state, v)
 
-                self.pi[(i, j)] = np.zeros_like(self.pi[(i, j)])
-                self.pi[(i, j)][action_new] = 1
+            self.pi[state] = np.zeros_like(self.pi[state])
+            self.pi[state][action_new] = 1
 
-                if action_old != action_new:
-                    policy_stable = False
+            if action_old != action_new:
+                policy_stable = False
 
         return policy_stable
