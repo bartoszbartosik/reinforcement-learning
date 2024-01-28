@@ -23,11 +23,11 @@ class TestMDP(unittest.TestCase):
         self.mdp_grid_a = MDP(grid_a, gridworld_reward, 0.9)
 
     def test_rewards(self):
-        reward = self.mdp_grid_a.action(self.mdp_grid_a.environment.actions[3])
+        reward = self.mdp_grid_a.action(self.mdp_grid_a.env.actions[3])
         self.assertEqual(reward, 0)
-        reward = self.mdp_grid_a.action(self.mdp_grid_a.environment.actions[3])
+        reward = self.mdp_grid_a.action(self.mdp_grid_a.env.actions[3])
         self.assertEqual(reward, 10)
-        reward = self.mdp_grid_a.action(self.mdp_grid_a.environment.actions[1])
+        reward = self.mdp_grid_a.action(self.mdp_grid_a.env.actions[1])
         self.assertEqual(reward, -1)
 
 
