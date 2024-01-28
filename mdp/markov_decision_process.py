@@ -24,11 +24,28 @@ class MDP:
         self.gamma = discount_factor
 
         # Initialize as equiprobable random policy
-        self.policy = 1/len(self.actions)*np.ones((len(self.env.states), len(self.actions)))
+        self.policy = 1/len(self.actions)*np.ones((len(self.states), len(self.actions)))
 
 
-    def follow_policy(self):
-        pass
+    def generate_episode(self, steps, policy):
+        episode = []
+
+        # Randomly choose T_0 state which is not a terminal nor obstacle state
+        state = np.random.choice([state for state in self.states if state not in self.terminal_states+self.obstacle_states])
+        self.env.state = self.serializer.deserialize_state(state)
+        action = np.argmax(policy[self.serializer.serialize_state(self.env.state)])
+        reward = self.action(self.serializer.deserialize_action(action))
+        episode.append((state, action, reward))
+        if self.env.state not in self.terminal_states:
+            for T in range(1, steps):
+                state = self.serializer.serialize_state(self.env.state)
+                action = np.random.choice(self.actions, p=policy[state])
+                reward = self.action(self.serializer.deserialize_action(action))
+                episode.append((state, action, reward))
+                if self.serializer.serialize_state(self.env.state) in self.terminal_states:
+                    break
+
+        return episode
 
 
     def reward_function(self, state: int, action: int, next_state: int):

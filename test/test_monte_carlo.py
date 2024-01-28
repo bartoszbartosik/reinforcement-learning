@@ -5,7 +5,7 @@ import numpy as np
 from envs.grid import Grid
 from envs.grid_a import GridA
 from mdp.markov_decision_process import MDP
-import methods.dynamic_programming as dp
+import methods.monte_carlo as MC
 
 class TestDP(unittest.TestCase):
 
@@ -33,7 +33,7 @@ class TestDP(unittest.TestCase):
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
         # # # # # # # # # # # # # # # # # # # # # # #   G R I D   4 x 4   # # # # # # # # # # # # # # # # # # # # # # #
         # Set the environment
-        self.grid = Grid(4, 4, terminals=[(0, 0), (3, 3)])
+        self.grid = Grid(4, 4, terminals=[(0, 0), (3, 3)], obstacles=[(0, 1)])
 
         # Define the reward function
         def rw(state, action, next_state):
@@ -45,4 +45,4 @@ class TestDP(unittest.TestCase):
 
 
     def test_first_visit_prediction(self):
-        pass
+        MC.first_visit_prediction(self.mdp_grid, 10)
