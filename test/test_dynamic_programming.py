@@ -4,7 +4,7 @@ import numpy as np
 
 from envs.grid import Grid
 from envs.grid_a import GridA
-from mdp.mdp import MDP
+from mdp.markov_decision_process import MDP
 import methods.dynamic_programming as dp
 
 class TestDP(unittest.TestCase):

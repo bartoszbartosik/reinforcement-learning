@@ -1,5 +1,5 @@
 import numpy as np
-from mdp.mdp import MDP
+from mdp.markov_decision_process import MDP
 
 # TODO: remove policy attribute from MDP class
 
@@ -106,7 +106,7 @@ def __compute_state_value(mdp: MDP, state, state_values) -> float:
     max_value = float('-inf')
     for action in mdp.actions:
         next_state = mdp.get_next_state(state, action)
-        reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+        reward = mdp.reward_function(state, action, next_state)
         state_value = reward + mdp.gamma*state_values[next_state]
         if state_value > max_value:
             max_value = state_value
@@ -122,7 +122,7 @@ def __compute_action_value(mdp: MDP, state, action, q_table) -> float:
         return 0
 
     next_state = mdp.get_next_state(state, action)
-    reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+    reward = mdp.reward_function(state, action, next_state)
     q = reward + mdp.gamma*max(q_table[next_state])
 
     return q
@@ -139,7 +139,7 @@ def __evaluate_state(mdp: MDP, state, state_values) -> float:
     for action in mdp.actions:
         pi_a = mdp.policy[state][action]
         next_state = mdp.get_next_state(state, action)
-        reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+        reward = mdp.reward_function(state, action, next_state)
         v += pi_a * (reward + mdp.gamma * state_values[next_state])
 
     return v
@@ -150,7 +150,7 @@ def __improve_policy(mdp: MDP, state, state_values) -> str:
     max_action = None
     for action in mdp.actions:
         next_state = mdp.get_next_state(state, action)
-        reward = mdp.reward_function(mdp.environment.states[state], mdp.environment.actions[action], mdp.environment.states[next_state])
+        reward = mdp.reward_function(state, action, next_state)
         state_value = reward + mdp.gamma*state_values[next_state]
         if state_value > max_value:
             max_value = state_value
