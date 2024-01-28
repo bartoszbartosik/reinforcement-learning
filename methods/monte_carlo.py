@@ -1,12 +1,8 @@
 import numpy as np
 
 
-def first_visit_preditction(mdp, policy):
+def first_visit_prediction(mdp, policy):
     # Initialize state-values matrix
-    v = np.zeros_like(mdp.environment.grid)
+    v = np.zeros_like(mdp.states, dtype=float)
 
-    
 
-    for i in range(mdp.environment.width):
-        for j in range(mdp.environment.height):
-            action = np.argmax(policy[(i, j)])
