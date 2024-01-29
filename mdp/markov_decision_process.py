@@ -33,10 +33,10 @@ class MDP:
         # Randomly choose T_0 state which is not a terminal nor obstacle state
         state = np.random.choice([state for state in self.states if state not in self.terminal_states+self.obstacle_states])
         self.env.state = self.serializer.deserialize_state(state)
-        action = np.argmax(policy[self.serializer.serialize_state(self.env.state)])
+        action = np.random.choice(self.actions, p=policy[state])
         reward = self.action(self.serializer.deserialize_action(action))
         episode.append((state, action, reward))
-        if self.env.state not in self.terminal_states:
+        if self.serializer.serialize_state(self.env.state) not in self.terminal_states:
             for T in range(1, steps):
                 state = self.serializer.serialize_state(self.env.state)
                 action = np.random.choice(self.actions, p=policy[state])

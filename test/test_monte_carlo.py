@@ -33,7 +33,7 @@ class TestDP(unittest.TestCase):
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
         # # # # # # # # # # # # # # # # # # # # # # #   G R I D   4 x 4   # # # # # # # # # # # # # # # # # # # # # # #
         # Set the environment
-        self.grid = Grid(4, 4, terminals=[(0, 0), (3, 3)], obstacles=[(0, 1)])
+        self.grid = Grid(4, 4, terminals=[(0, 0), (3, 3)])
 
         # Define the reward function
         def rw(state, action, next_state):
@@ -45,4 +45,5 @@ class TestDP(unittest.TestCase):
 
 
     def test_first_visit_prediction(self):
-        MC.first_visit_prediction(self.mdp_grid, 10)
+        v = MC.first_visit_prediction(self.mdp_grid_a, 100, 10).reshape(self.grid_a.grid.shape)
+        print(v)

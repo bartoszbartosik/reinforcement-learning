@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def first_visit_prediction(mdp, episodes, policy=None):
+def first_visit_prediction(mdp, episodes, steps, policy=None):
     # If policy not given, assume equiprobable
     if policy is None:
         policy = 1/len(mdp.actions)*np.ones((len(mdp.states), len(mdp.actions)))
@@ -9,19 +9,21 @@ def first_visit_prediction(mdp, episodes, policy=None):
     # Initialize state-values matrix
     v = np.zeros_like(mdp.states, dtype=float)
 
-    # Returns
-    G = np.zeros_like(mdp.states, dtype=float)
-
     # Visits
     visits = np.zeros_like(mdp.states)
 
     for _ in range(episodes):
-        episode = mdp.generate_episode(steps=10, policy=policy)
+        episode = mdp.generate_episode(steps=steps, policy=policy)
+        G = 0
         for state, _, reward in reversed(episode):
-            G[state] = mdp.gamma*G[state] + reward
+            G = mdp.gamma * G + reward
+            v[state] += G
             visits[state] += 1
 
-    v = G/visits
+
+    v /= visits
+
+    return v
 
 
 def __first_visit_state_value():
