@@ -20,30 +20,27 @@ class MDP:
 
 
     def generate_episode(self, steps, policy):
-        episode = []
+        # Initialize episode tuples list
+        episode: [tuple] = []
 
-        # Randomly choose T_0 state which is not a terminal nor obstacle state
-        available_states = [state for state in self.env.states if state not in self.env.terminal_states + self.env.obstacle_states]
-        state_id = np.random.choice(len(available_states))
-        state = self.env.states[state_id]
-        self.env.state = state
+        for T in range(steps):
+            if T == 0:
+                # Randomly choose T_0 state which is not a terminal nor obstacle state
+                available_states = [state for state in self.env.states if state not in self.env.terminal_states + self.env.obstacle_states]
+                state_id = np.random.choice(len(available_states))
+                self.env.state = self.env.states[state_id]
 
-        # Choose an action for T_0 state following given policy
-        action = np.random.choice(self.env.actions, p=policy[self.env.states.index(state)])
+            # Update current state
+            state = self.env.state
 
-        # Perform an action and receive reward
-        reward = self.action(action)
+            # Choose an action for T_0 state following given policy
+            action = np.random.choice(self.env.actions, p=policy[self.env.states.index(state)])
 
-        # Append record to the episode (s_0, a_0, r_1)
-        episode.append((state, action, reward))
-        if self.env.state not in self.env.terminal_states:
-            for T in range(1, steps):
-                state = self.env.state
-                action = np.random.choice(self.env.actions, p=policy[self.env.states.index(state)])
-                reward = self.action(action)
-                episode.append((state, action, reward))
-                if self.env.state in self.env.terminal_states:
-                    break
+            # Perform an action and receive reward
+            reward = self.action(action)
+
+            # Append record to the episode (s_0, a_0, r_1)
+            episode.append((state, action, reward))
 
         return episode
 
