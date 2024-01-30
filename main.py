@@ -7,7 +7,8 @@ import methods.dynamic_programming as dp
 
 
 def main():
-    pass
+    l = range(1000000000000)
+    print(l.index(1))
 
 if __name__ == '__main__':
     main()
