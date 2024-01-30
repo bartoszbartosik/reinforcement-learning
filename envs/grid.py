@@ -42,9 +42,14 @@ class Grid(Environment):
             for obstacle in obstacles:
                 self.grid[obstacle] = Grid.GridElements.OBSTACLE.value
 
+        for state_id, state in enumerate(self.states):
+            for action_id, action in enumerate(self.actions):
+                for next_state_id, next_state in enumerate(self.states):
+                    if self.get_next_state(state, action) == next_state:
+                        self.p[next_state_id][state_id][action_id] = 1
+                    else:
+                        self.p[next_state_id][state_id][action_id] = 0
 
-    def set_state(self, state):
-        self.state = state
 
 
     def action(self, action: str):

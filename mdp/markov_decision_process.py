@@ -45,8 +45,6 @@ class MDP:
         return episode
 
 
-    # def set_state
-
     def action(self, action):
         next_state = self.env.get_next_state(self.env.state, action)
         reward = self.rw(self.env.state, action, next_state)

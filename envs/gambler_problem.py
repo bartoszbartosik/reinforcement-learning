@@ -7,12 +7,22 @@ class GamblerProblem(Environment):
 
     def __init__(self, goal_capital, heads_probability):
         self.ph = heads_probability
-        state = int(goal_capital / 2)
-        super().__init__(actions=list(np.arange(0, min(state, 100 - state) + 1, 1)),
+        state = int(goal_capital / 1)
+        super().__init__(actions=list(np.arange(0, goal_capital + 1, 1)),
+                         # actions=list(np.arange(0, min(state, 100 - state) + 1, 1)),
                          states=list(np.arange(0, goal_capital+1, 1)),
-                         terminal_states=[0, 100])
+                         terminal_states=[0])
         self.state = state
 
+        for state_id, state in enumerate(self.states):
+            for action_id, action in enumerate(self.actions):
+                for next_state_id, next_state in enumerate(self.states):
+                    if state + action == next_state:
+                        self.p[next_state_id][state_id][action_id] = self.ph
+                    elif state - action == next_state:
+                        self.p[next_state_id][state_id][action_id] = 1-self.ph
+                    else:
+                        self.p[next_state_id][state_id][action_id] = 0
 
     def action(self, action):
         next_state = self.get_next_state(super().state, action)
@@ -20,12 +30,9 @@ class GamblerProblem(Environment):
         self.state = next_state
 
 
-    def set_state(self, state):
-        self.state = state
-        self.actions = list(np.arange(0, min(state, 100 - state) + 1, 1))
-
-
     def get_next_state(self, state, action):
+        action = min(state, 100 - state)
+
         stake = action
 
         coin_flip = np.random.choice([False, True], p=[1-self.ph, self.ph])

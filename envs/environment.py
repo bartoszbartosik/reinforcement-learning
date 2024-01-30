@@ -26,14 +26,13 @@ class Environment(ABC):
         # Initialize state
         self.state = None
 
+        # Initialize transition probabilities
+        self.p = np.zeros((len(self.states), len(self.states), len(self.actions)))
 
     @abstractmethod
     def action(self, action):
         pass
 
-    @abstractmethod
-    def set_state(self, state):
-        pass
 
     @abstractmethod
     def get_next_state(self, state, action):
