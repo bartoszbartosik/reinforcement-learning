@@ -5,18 +5,25 @@ from envs.environment import Environment
 
 class GamblerProblem(Environment):
 
-    def __init__(self, capital, heads_probability):
-        self.capital = capital
+    def __init__(self, goal_capital, heads_probability):
         self.ph = heads_probability
-        self.state = int(capital/2)
+        state = int(goal_capital / 2)
+        super().__init__(actions=list(np.arange(0, min(state, 100 - state) + 1, 1)),
+                         states=list(np.arange(0, goal_capital+1, 1)),
+                         terminal_states=[0, 100])
+        self.state = state
 
-        states = list(np.arange(1, capital+1, 1))
-        actions = list(np.arange(0, min(self.state, capital - self.state), 1))
-        super().__init__(actions, states)
 
     def action(self, action):
-        next_state = self.get_next_state(self.state, action)
+        next_state = self.get_next_state(super().state, action)
+        self.actions = list(np.arange(0, min(next_state, 100 - next_state) + 1, 1))
         self.state = next_state
+
+
+    def set_state(self, state):
+        self.state = state
+        self.actions = list(np.arange(0, min(state, 100 - state) + 1, 1))
+
 
     def get_next_state(self, state, action):
         stake = action
@@ -24,11 +31,9 @@ class GamblerProblem(Environment):
         coin_flip = np.random.choice([False, True], p=[1-self.ph, self.ph])
 
         if coin_flip:
-            next_state = self.state + stake
+            next_state = state + stake
         else:
-            next_state = self.state - stake
-
-        self.actions = list(np.arange(0, min(next_state, self.capital - next_state), 1))
+            next_state = state - stake
 
         return next_state
 

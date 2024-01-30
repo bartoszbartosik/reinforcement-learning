@@ -4,6 +4,7 @@ import numpy as np
 
 from envs.grid import Grid
 from envs.grid_a import GridA
+from envs.gambler_problem import GamblerProblem
 from mdp.markov_decision_process import MDP
 import methods.dynamic_programming as dp
 
@@ -62,7 +63,7 @@ class TestDP(unittest.TestCase):
 
     def test_optimal_action_value(self):
         optimal_action_values = (dp.get_optimal_action_value(self.mdp_grid_a)
-                                 .reshape((self.grid_a.height, self.grid_a.width, len(self.mdp_grid_a.actions))))
+                                 .reshape((self.grid_a.height, self.grid_a.width, len(self.mdp_grid_a.env.actions))))
         expected_optimal_state_values = np.array([
             [[18.8, 17.8, 18.8, 22.],
             [24.4, 24.4, 24.4, 24.4],

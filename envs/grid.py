@@ -43,6 +43,10 @@ class Grid(Environment):
                 self.grid[obstacle] = Grid.GridElements.OBSTACLE.value
 
 
+    def set_state(self, state):
+        self.state = state
+
+
     def action(self, action: str):
         # Get the next state
         next_state = self.get_next_state(self.state, action)

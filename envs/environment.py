@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 
 import numpy as np
@@ -27,10 +27,17 @@ class Environment(ABC):
         self.state = None
 
 
+    @abstractmethod
     def action(self, action):
         pass
 
+    @abstractmethod
+    def set_state(self, state):
+        pass
 
+    @abstractmethod
     def get_next_state(self, state, action):
         pass
+
+
 
