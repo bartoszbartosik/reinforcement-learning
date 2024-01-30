@@ -29,18 +29,26 @@ class MDP:
         episode = []
 
         # Randomly choose T_0 state which is not a terminal nor obstacle state
-        state = np.random.choice([state for state in self.states if state not in self.terminal_states+self.obstacle_states])
-        self.env.state = self.serializer.deserialize_state(state)
-        action = np.random.choice(self.actions, p=policy[state])
-        reward = self.action(self.serializer.deserialize_action(action))
+        available_states = [state for state in self.states if state not in self.terminal_states + self.obstacle_states]
+        state_id = np.random.choice(len(available_states))
+        state = self.states[state_id]
+        self.env.state = state
+
+        # Choose an action for T_0 state following given policy
+        action = np.random.choice(self.actions, p=policy[self.states.index(state)])
+
+        # Perform an action and receive reward
+        reward = self.action(action)
+
+        # Append record to the episode (s_0, a_0, r_1)
         episode.append((state, action, reward))
-        if self.serializer.serialize_state(self.env.state) not in self.terminal_states:
+        if self.env.state not in self.terminal_states:
             for T in range(1, steps):
-                state = self.serializer.serialize_state(self.env.state)
-                action = np.random.choice(self.actions, p=policy[state])
-                reward = self.action(self.serializer.deserialize_action(action))
+                state = self.env.state
+                action = np.random.choice(self.actions, p=policy[self.states.index(state)])
+                reward = self.action(action)
                 episode.append((state, action, reward))
-                if self.serializer.serialize_state(self.env.state) in self.terminal_states:
+                if self.env.state in self.terminal_states:
                     break
 
         return episode
