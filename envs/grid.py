@@ -98,6 +98,12 @@ class Grid(Environment):
         return tuple(state.copy())
 
 
+    def get_next_transitions(self, state, action):
+        next_state = self.get_next_state(state, action)
+        p = 1
+        return p, next_state
+
+
     def set_agent(self, agent_position: tuple):
         self.grid[self.state], self.grid[agent_position] = self.grid[agent_position], self.grid[self.state]
         self.state = agent_position

@@ -97,9 +97,6 @@ def policy_evaluation(mdp: MDP) -> np.ndarray:
 # # # # # # # # # # # # # # # # # # # # #   PRIVATE   FUNCTIONS   # # # # # # # # # # # # # # # # # # # # #
 
 def __compute_state_value(mdp: MDP, state, state_values) -> float:
-    if state == 100:
-        return 1
-
     if state in mdp.env.terminal_states:
         return 0
 
@@ -107,15 +104,27 @@ def __compute_state_value(mdp: MDP, state, state_values) -> float:
         return 0
 
     max_value = float('-inf')
+    # for action in mdp.env.actions:
+    #     next_state = mdp.get_next_state(state, action)
+    #     reward = mdp.rw(state, action, next_state)
+    #     p = mdp.env.p[mdp.env.states.index(next_state)][mdp.env.states.index(state)][mdp.env.actions.index(action)]
+    #     state_value = p * (reward + mdp.gamma*state_values[mdp.env.states.index(next_state)])
+    #     if state_value > max_value:
+    #         max_value = state_value
+    #
+    # return max_value
+
     for action in mdp.env.actions:
-        next_state = mdp.get_next_state(state, action)
-        reward = mdp.rw(state, action, next_state)
-        p = mdp.env.p[mdp.env.states.index(next_state)][mdp.env.states.index(state)][mdp.env.actions.index(action)]
-        state_value = p * (reward + mdp.gamma*state_values[mdp.env.states.index(next_state)])
-        if state_value > max_value:
-            max_value = state_value
+        probs, next_states = mdp.env.get_next_transitions(state, action)
+        state_value = 0
+        for prob, next_state in probs, next_states:
+            reward = mdp.rw(state, action, next_state)
+            state_value += prob * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)])
+            if state_value > max_value:
+                max_value = state_value
 
     return max_value
+
 
 
 def __compute_action_value(mdp: MDP, state, action, q_table) -> float:

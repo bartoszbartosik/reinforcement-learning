@@ -44,3 +44,12 @@ class GamblerProblem(Environment):
 
         return next_state
 
+
+    def get_next_transitions(self, state, action):
+        tails_state = state - action
+        heads_state = state + action
+        p_tails = self.p[self.states.index(tails_state)][self.actions.index(action)][self.states.index(state)]
+        p_heads = self.p[self.states.index(heads_state)][self.actions.index(action)][self.states.index(state)]
+
+        return (p_tails, p_heads), (tails_state, heads_state)
+

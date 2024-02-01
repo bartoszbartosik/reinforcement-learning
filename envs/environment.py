@@ -26,7 +26,7 @@ class Environment(ABC):
         # Initialize state
         self.state = None
 
-        # Initialize transition probabilities
+        # Initialize state-transition probabilities
         self.p = np.zeros((len(self.states), len(self.states), len(self.actions)))
 
     @abstractmethod
@@ -36,6 +36,11 @@ class Environment(ABC):
 
     @abstractmethod
     def get_next_state(self, state, action):
+        pass
+
+
+    @abstractmethod
+    def get_next_transitions(self, state, action) -> tuple:
         pass
 
 

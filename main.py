@@ -8,8 +8,7 @@ from mdp.markov_decision_process import MDP
 
 
 def main():
-    l = range(1000000000000)
-    print(l.index(1))
+    pass
 
 if __name__ == '__main__':
     main()
