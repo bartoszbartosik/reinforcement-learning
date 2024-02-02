@@ -27,11 +27,14 @@ def main():
     plt.subplot(211)
     plt.xlabel('Capital')
     plt.ylabel('Value estimates')
+    plt.grid()
     plt.plot(gambler.states, v)
+
     plt.subplot(212)
     plt.xlabel('Capital')
     plt.ylabel('Final policy (stake)')
     plt.bar(gambler.states, pi)
+    plt.grid()
     plt.show()
 
 

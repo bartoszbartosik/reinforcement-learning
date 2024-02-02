@@ -96,8 +96,6 @@ def exploring_starts(mdp, episodes, steps, policy=None):
     # Compute average expected return
     q /= visits
 
-
-
     return q
 
 

@@ -8,12 +8,10 @@ class Gambler(Environment):
     def __init__(self, goal_capital, heads_probability):
         self.goal_capital = goal_capital
         self.ph = heads_probability
-        state = int(goal_capital / 1)
         super().__init__(actions=list(np.arange(0, goal_capital + 1, 1)),
-                         # actions=list(np.arange(0, min(state, 100 - state) + 1, 1)),
                          states=list(np.arange(0, goal_capital+1, 1)),
-                         terminal_states=[0, 100])
-        self.state = state
+                         terminal_states=[0, goal_capital])
+        self.state = int(goal_capital / 1)
 
         for state_id, state in enumerate(self.states):
             for action_id, action in enumerate(self.actions):
@@ -29,7 +27,7 @@ class Gambler(Environment):
 
 
     def get_next_state(self, state, action):
-        if action > min(state, 100 - state):
+        if action > min(state, self.goal_capital - state):
             return 0
 
         coin_flip = np.random.choice([False, True], p=[1-self.ph, self.ph])
@@ -43,7 +41,7 @@ class Gambler(Environment):
 
 
     def get_next_transitions(self, state, action):
-        if action > min(state, 100 - state):
+        if action > min(state, self.goal_capital - state):
             return [0], (0, 0)
 
         tails_state = state - action
