@@ -7,6 +7,7 @@ from envs.grid_a import GridA
 from mdp.markov_decision_process import MDP
 import methods.monte_carlo as MC
 
+
 class TestDP(unittest.TestCase):
 
 
@@ -47,3 +48,4 @@ class TestDP(unittest.TestCase):
     def test_first_visit_prediction(self):
         v = MC.first_visit_prediction(self.mdp_grid_a, 100, 1000).reshape(self.grid_a.grid.shape)
         print(v)
+

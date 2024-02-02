@@ -3,7 +3,7 @@ import numpy as np
 from envs.environment import Environment
 
 
-class GamblerProblem(Environment):
+class Gambler(Environment):
 
     def __init__(self, goal_capital, heads_probability):
         self.goal_capital = goal_capital
@@ -24,32 +24,26 @@ class GamblerProblem(Environment):
                         self.p[next_state_id][state_id][action_id] = 1-self.ph
 
     def action(self, action):
-        next_state = self.get_next_state(super().state, action)
-        self.actions = list(np.arange(0, min(next_state, 100 - next_state) + 1, 1))
+        next_state = self.get_next_state(self.state, action)
         self.state = next_state
 
 
     def get_next_state(self, state, action):
-        if action > state:
-            action = state
-
-        stake = action
+        if action > min(state, 100 - state):
+            return 0
 
         coin_flip = np.random.choice([False, True], p=[1-self.ph, self.ph])
 
         if coin_flip:
-            next_state = state + stake
+            next_state = state + action
         else:
-            next_state = state - stake
+            next_state = state - action
 
         return next_state
 
 
     def get_next_transitions(self, state, action):
         if action > min(state, 100 - state):
-            action = min(state, 100 - state)
-            return [0], (0, 0)
-        elif action == 0:
             return [0], (0, 0)
 
         tails_state = state - action

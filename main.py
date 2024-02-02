@@ -2,7 +2,7 @@ import numpy as np
 
 from envs.grid import Grid
 from envs.grid_a import GridA
-from envs.gambler_problem import GamblerProblem
+from envs.gambler import Gambler
 import methods.dynamic_programming as dp
 from mdp.markov_decision_process import MDP
 

@@ -33,7 +33,7 @@ class MDP:
             # Update current state
             state = self.env.state
 
-            # Choose an action for T_0 state following given policy
+            # Choose an action for T state following given policy
             action = np.random.choice(self.env.actions, p=policy[self.env.states.index(state)])
 
             # Perform an action and receive reward
