@@ -3,6 +3,7 @@ from mdp.markov_decision_process import MDP
 
 # TODO: remove policy attribute from MDP class
 
+
 def get_optimal_state_value(mdp: MDP) -> np.ndarray:
     # Initialize state-values matrix
     v = np.zeros(len(mdp.env.states), dtype=float)
@@ -104,24 +105,15 @@ def __compute_state_value(mdp: MDP, state, state_values) -> float:
         return 0
 
     max_value = float('-inf')
-    # for action in mdp.env.actions:
-    #     next_state = mdp.get_next_state(state, action)
-    #     reward = mdp.rw(state, action, next_state)
-    #     p = mdp.env.p[mdp.env.states.index(next_state)][mdp.env.states.index(state)][mdp.env.actions.index(action)]
-    #     state_value = p * (reward + mdp.gamma*state_values[mdp.env.states.index(next_state)])
-    #     if state_value > max_value:
-    #         max_value = state_value
-    #
-    # return max_value
 
     for action in mdp.env.actions:
+        v = 0
         probs, next_states = mdp.env.get_next_transitions(state, action)
-        state_value = 0
-        for prob, next_state in probs, next_states:
+        for prob, next_state in zip(probs, next_states):
             reward = mdp.rw(state, action, next_state)
-            state_value += prob * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)])
-            if state_value > max_value:
-                max_value = state_value
+            v += prob * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)])
+            if v > max_value:
+                max_value = v
 
     return max_value
 
@@ -134,10 +126,11 @@ def __compute_action_value(mdp: MDP, state, action, q_table) -> float:
     if state in mdp.env.obstacle_states:
         return 0
 
-    next_state = mdp.get_next_state(state, action)
-    reward = mdp.rw(state, action, next_state)
-    p = mdp.env.p[mdp.env.states.index(next_state)][mdp.env.states.index(state)][mdp.env.actions.index(action)]
-    q = p * (reward + mdp.gamma*max(q_table[mdp.env.states.index(next_state)]))
+    q = 0
+    probs, next_states = mdp.env.get_next_transitions(state, action)
+    for prob, next_state in zip(probs, next_states):
+        reward = mdp.rw(state, action, next_state)
+        q = prob * (reward + mdp.gamma*max(q_table[mdp.env.states.index(next_state)]))
 
     return q
 
@@ -151,11 +144,11 @@ def __evaluate_state(mdp: MDP, state, state_values) -> float:
 
     v = 0
     for action_id, action in enumerate(mdp.env.actions):
-        pi_a = mdp.policy[mdp.env.states.index(state)][action_id]
-        next_state = mdp.get_next_state(state, action)
-        reward = mdp.rw(state, action, next_state)
-        p = mdp.env.p[mdp.env.states.index(next_state)][mdp.env.states.index(state)][mdp.env.actions.index(action)]
-        v += pi_a * ( p * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)]))
+        probs, next_states = mdp.env.get_next_transitions(state, action)
+        for prob, next_state in zip(probs, next_states):
+            pi_a = mdp.policy[mdp.env.states.index(state)][action_id]
+            reward = mdp.rw(state, action, next_state)
+            v += pi_a * ( prob * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)]))
 
     return v
 
@@ -164,13 +157,14 @@ def __improve_policy(mdp: MDP, state, state_values) -> str:
     max_value = float('-inf')
     max_action = None
     for action in mdp.env.actions:
-        next_state = mdp.get_next_state(state, action)
-        reward = mdp.rw(state, action, next_state)
-        p = mdp.env.p[mdp.env.states.index(next_state)][mdp.env.states.index(state)][mdp.env.actions.index(action)]
-        state_value = p * (reward + mdp.gamma*state_values[mdp.env.states.index(next_state)])
-        if state_value > max_value:
-            max_value = state_value
-            max_action = action
+        v = 0
+        probs, next_states = mdp.env.get_next_transitions(state, action)
+        for prob, next_state in zip(probs, next_states):
+            reward = mdp.rw(state, action, next_state)
+            v += prob * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)])
+            if v > max_value:
+                max_value = v
+                max_action = action
 
     return max_action
 

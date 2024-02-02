@@ -99,8 +99,8 @@ class Grid(Environment):
 
 
     def get_next_transitions(self, state, action):
-        next_state = self.get_next_state(state, action)
-        p = 1
+        next_state = [self.get_next_state(state, action)]
+        p = [1]
         return p, next_state
 
 
