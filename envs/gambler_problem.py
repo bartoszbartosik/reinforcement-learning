@@ -6,12 +6,13 @@ from envs.environment import Environment
 class GamblerProblem(Environment):
 
     def __init__(self, goal_capital, heads_probability):
+        self.goal_capital = goal_capital
         self.ph = heads_probability
         state = int(goal_capital / 1)
         super().__init__(actions=list(np.arange(0, goal_capital + 1, 1)),
                          # actions=list(np.arange(0, min(state, 100 - state) + 1, 1)),
                          states=list(np.arange(0, goal_capital+1, 1)),
-                         terminal_states=[0])
+                         terminal_states=[0, 100])
         self.state = state
 
         for state_id, state in enumerate(self.states):
@@ -21,8 +22,6 @@ class GamblerProblem(Environment):
                         self.p[next_state_id][state_id][action_id] = self.ph
                     elif state - action == next_state:
                         self.p[next_state_id][state_id][action_id] = 1-self.ph
-                    else:
-                        self.p[next_state_id][state_id][action_id] = 0
 
     def action(self, action):
         next_state = self.get_next_state(super().state, action)
@@ -31,7 +30,8 @@ class GamblerProblem(Environment):
 
 
     def get_next_state(self, state, action):
-        action = min(state, 100 - state)
+        if action > state:
+            action = state
 
         stake = action
 
@@ -46,10 +46,16 @@ class GamblerProblem(Environment):
 
 
     def get_next_transitions(self, state, action):
+        if action > min(state, 100 - state):
+            action = min(state, 100 - state)
+            return [0], (0, 0)
+        elif action == 0:
+            return [0], (0, 0)
+
         tails_state = state - action
         heads_state = state + action
-        p_tails = self.p[self.states.index(tails_state)][self.actions.index(action)][self.states.index(state)]
-        p_heads = self.p[self.states.index(heads_state)][self.actions.index(action)][self.states.index(state)]
+        p_tails = self.p[self.states.index(tails_state)][self.states.index(state)][self.actions.index(action)]
+        p_heads = self.p[self.states.index(heads_state)][self.states.index(state)][self.actions.index(action)]
 
         return (p_tails, p_heads), (tails_state, heads_state)
 
