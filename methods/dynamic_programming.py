@@ -24,7 +24,7 @@ def get_optimal_state_value(mdp: MDP) -> np.ndarray:
 
 
 def get_optimal_action_value(mdp: MDP) -> np.ndarray:
-    # Initialize action-values tensor
+    # Initialize action-values matrix
     q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
 
     # Solution convergence threshold

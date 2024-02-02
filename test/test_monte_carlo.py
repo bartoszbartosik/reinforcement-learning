@@ -46,6 +46,18 @@ class TestDP(unittest.TestCase):
 
 
     def test_first_visit_prediction(self):
-        v = MC.first_visit_prediction(self.mdp_grid_a, 100, 1000).reshape(self.grid_a.grid.shape)
+        v = MC.first_visit_prediction(self.mdp_grid_a, 10, 1000).reshape(self.grid_a.grid.shape)
         print(v)
 
+
+    def test_every_visit_prediction(self):
+        v = MC.every_visit_prediction(self.mdp_grid_a, 10, 1000).reshape(self.grid_a.grid.shape)
+
+
+    def test_exploring_starts(self):
+        q = MC.exploring_starts(self.mdp_grid_a, 100, 1000)
+        print(q)
+
+    def test_on_policy_first_visit(self):
+        q, pi = MC.on_policy_first_visit(self.mdp_grid_a, 100, 1000, 0.1)
+        print(q, pi)
