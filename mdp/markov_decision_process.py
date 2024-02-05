@@ -19,7 +19,7 @@ class MDP:
         self.policy = 1/len(self.env.actions)*np.ones((len(self.env.states), len(self.env.actions)))
 
 
-    def generate_episode(self, steps, policy):
+    def generate_episode(self, steps, policy) -> list:
         # Initialize episode tuples list
         episode: [tuple] = []
 

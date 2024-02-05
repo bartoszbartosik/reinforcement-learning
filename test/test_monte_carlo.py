@@ -55,9 +55,19 @@ class TestDP(unittest.TestCase):
 
 
     def test_exploring_starts(self):
-        q = MC.exploring_starts(self.mdp_grid_a, 100, 1000)
-        print(q)
+        q = MC.exploring_starts(self.mdp_grid_a, 10, 1000)
+
 
     def test_on_policy_first_visit(self):
-        q, pi = MC.on_policy_first_visit(self.mdp_grid_a, 100, 1000, 0.1)
-        print(q, pi)
+        q, pi = MC.on_policy_first_visit(self.mdp_grid_a, 1000, 1000, 0.1)
+        print('on policy', q, pi)
+
+
+    def test_off_policy_prediction(self):
+        q = MC.off_policy_prediction(self.mdp_grid_a, 10, 1000)
+
+
+    def test_off_policy_control(self):
+        q, pi = MC.off_policy_control(self.mdp_grid_a, 1000, 1000)
+        print('off policy', q, pi)
+
