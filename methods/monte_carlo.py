@@ -202,7 +202,7 @@ def off_policy_control(mdp, episodes, steps):
             if action_id != max_action_id:
                 break
 
-            w *= policy[state_id][action_id]/b[state_id][action_id]
+            w *= 1/b[state_id][action_id]
 
     return q, policy
 
