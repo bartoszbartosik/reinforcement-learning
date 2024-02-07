@@ -6,10 +6,10 @@ import numpy as np
 
 class Environment(ABC):
 
-    def __init__(self, actions, states, terminal_states=None, obstacle_states = None):
+    def __init__(self, actions: list, states: list, terminal_states: list = None, obstacle_states: list = None):
         # Initialize actions and states sets
-        self.actions = actions
-        self.states = states
+        self.actions: list = actions
+        self.states: list = states
 
         # Initialize terminal states
         if terminal_states is None:
@@ -33,15 +33,10 @@ class Environment(ABC):
     def action(self, action):
         pass
 
-
     @abstractmethod
     def get_next_state(self, state, action):
         pass
 
-
     @abstractmethod
     def get_next_transitions(self, state, action) -> tuple:
         pass
-
-
-

@@ -27,8 +27,7 @@ class MDP:
             if T == 0:
                 # Randomly choose T_0 state which is not a terminal nor obstacle state
                 available_states = [state for state in self.env.states if state not in self.env.terminal_states + self.env.obstacle_states]
-                state_id = np.random.choice(len(available_states))
-                self.env.state = self.env.states[state_id]
+                self.env.state = available_states[np.random.choice(len(available_states))]
 
             # Update current state
             state = self.env.state

@@ -16,7 +16,7 @@ class Grid(Environment):
 
 
     def __init__(self, width, height, terminals=None, obstacles=None):
-        super().__init__(actions=('UP', 'DOWN', 'LEFT', 'RIGHT'),
+        super().__init__(actions=['UP', 'DOWN', 'LEFT', 'RIGHT'],
                          states=[(i, j) for i in range(height) for j in range(width)],
                          terminal_states=terminals,
                          obstacle_states=obstacles)
