@@ -44,9 +44,12 @@ def sarsa(mdp: MDP, episodes, steps, step_size: float, epsilon: float):
     # Initialize action-values matrix
     q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
 
-    # Define action policy
-    take_action = lambda s: mdp.env.actions[np.argmax(q[s])] if np.random.random() >= epsilon else np.random.choice(
-        mdp.env.actions)
+    # Define an epsilon-greedy action policy
+    def take_action(state):
+        if np.random.random() >= epsilon:
+            return mdp.env.actions[np.argmax(q[state])]
+        else:
+            return np.random.choice(mdp.env.actions)
 
     # For each episode
     for _ in range(episodes):
@@ -82,6 +85,51 @@ def sarsa(mdp: MDP, episodes, steps, step_size: float, epsilon: float):
             step += 1
 
     return q
+
+
+def qlearning(mdp: MDP, episodes, steps, step_size: float, epsilon: float):
+    # Initialize action-values matrix
+    q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
+
+    # Define an epsilon-greedy action policy
+    def take_action(state):
+        if np.random.random() >= epsilon:
+            return mdp.env.actions[np.argmax(q[state])]
+        else:
+            return np.random.choice(mdp.env.actions)
+
+    # For each episode
+    for _ in range(episodes):
+        step = 0
+
+        # Initialize state
+        state = mdp.env.initial_state
+        while state not in mdp.env.terminal_states and step < steps:
+            s = mdp.env.states.index(state)
+
+            # Choose action greedily derived from the q values
+            action = take_action(s)
+            a = mdp.env.actions.index(action)
+
+            # Get the next state
+            next_state = mdp.get_next_state(state, action)
+            sp = mdp.env.states.index(next_state)
+
+            # Get the reward
+            reward = mdp.rw(state, action, next_state)
+
+            # Compute the state-action value
+            q[s][a] = q[s][a] + step_size * (reward + mdp.gamma * np.max(q[sp]) - q[s][a])
+
+            # Assign the next state as current for next iteration
+            state = next_state
+
+            # Episode step increment
+            step += 1
+
+    return q
+
+
 
 
 
