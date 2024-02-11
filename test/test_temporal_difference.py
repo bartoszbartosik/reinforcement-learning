@@ -54,4 +54,9 @@ class TestDP(unittest.TestCase):
 
     def test_q_learning(self):
         q = td.qlearning(self.mdp_grid_a, 1000, 1000, 0.1, 0.1)
+        # print(q)
+
+
+    def test_expected_sarsa(self):
+        q = td.expected_sarsa(self.mdp_grid_a, 1000, 1000, 0.1, 0.1)
         print(q)
