@@ -43,10 +43,10 @@ class TestDP(unittest.TestCase):
 
 
     def test_one_step_td(self):
-        v = td.one_step_td(self.mdp_grid, 1000, 0.2).reshape(self.grid.grid.shape)
+        v = td.one_step_td(self.mdp_grid, 1000, 100, 0.2).reshape(self.grid.grid.shape)
         print(v)
 
 
     def test_sarsa(self):
-        q = td.sarsa(self.mdp_grid_a, 10000, 0.01, 0.1)
+        q = td.sarsa(self.mdp_grid_a, 1000, 100, 0.01, 0.1)
         print(q)

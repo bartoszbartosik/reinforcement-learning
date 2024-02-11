@@ -29,6 +29,7 @@ class Grid(Environment):
         self.grid = Grid.GridElements.FREE.value * np.ones(shape=(height, width))
 
         # Initialize the agent position
+        self.initial_state = (0, 0)
         self.state = (0, 0)
         self.grid[self.state] = Grid.GridElements.AGENT.value
 
@@ -41,15 +42,6 @@ class Grid(Environment):
         if obstacles is not None:
             for obstacle in obstacles:
                 self.grid[obstacle] = Grid.GridElements.OBSTACLE.value
-
-        for state_id, state in enumerate(self.states):
-            for action_id, action in enumerate(self.actions):
-                for next_state_id, next_state in enumerate(self.states):
-                    if self.get_next_state(state, action) == next_state:
-                        self.p[next_state_id][state_id][action_id] = 1
-                    else:
-                        self.p[next_state_id][state_id][action_id] = 0
-
 
 
     def action(self, action: str):
@@ -99,9 +91,22 @@ class Grid(Environment):
 
 
     def get_next_transitions(self, state, action):
+        super().get_next_transitions(state, action)
+
         next_state = [self.get_next_state(state, action)]
         p = [1]
         return p, next_state
+
+
+    def __compute_state_transitions(self):
+        for state_id, state in enumerate(self.states):
+            for action_id, action in enumerate(self.actions):
+                for next_state_id, next_state in enumerate(self.states):
+                    if self.get_next_state(state, action) == next_state:
+                        self.p[next_state_id][state_id][action_id] = 1
+                    else:
+                        self.p[next_state_id][state_id][action_id] = 0
+
 
 
     def set_agent(self, agent_position: tuple):
@@ -111,7 +116,9 @@ class Grid(Environment):
 
     def set_obstacle(self, obstacle_position: tuple):
         self.grid[obstacle_position] = Grid.GridElements.OBSTACLE.value
+        self.obstacle_states.append(obstacle_position)
 
 
     def set_terminal(self, terminal_position: tuple):
         self.grid[terminal_position] = Grid.GridElements.TERMINAL.value
+        self.terminal_states.append(terminal_position)

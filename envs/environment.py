@@ -23,11 +23,15 @@ class Environment(ABC):
         else:
             self.obstacle_states = obstacle_states
 
+        self.available_states = [state for state in self.states if state not in self.terminal_states + self.obstacle_states]
+
         # Initialize state
         self.state = None
+        self.initial_state = None
 
         # Initialize state-transition probabilities
         self.p = np.zeros((len(self.states), len(self.states), len(self.actions)))
+        self.p_computed = False
 
     @abstractmethod
     def action(self, action):
@@ -38,5 +42,11 @@ class Environment(ABC):
         pass
 
     @abstractmethod
-    def get_next_transitions(self, state, action) -> tuple:
+    def get_next_transitions(self, state, action):
+        if not self.p_computed:
+            self.__compute_state_transitions()
+        pass
+
+
+    def __compute_state_transitions(self):
         pass

@@ -6,7 +6,7 @@ from mdp.markov_decision_process import MDP
 def first_visit_prediction(mdp: MDP, episodes, steps, policy=None):
     # If policy not given, assume equiprobable
     if policy is None:
-        policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+        policy = mdp.equiprobable_policy()
 
     # Initialize state-values matrix
     v = np.zeros(len(mdp.env.states), dtype=float)
@@ -38,7 +38,7 @@ def first_visit_prediction(mdp: MDP, episodes, steps, policy=None):
 def every_visit_prediction(mdp: MDP, episodes, steps, policy=None):
     # If policy not given, assume equiprobable
     if policy is None:
-        policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+        policy = mdp.equiprobable_policy()
 
     # Initialize state-values matrix
     v = np.zeros(len(mdp.env.states), dtype=float)
@@ -69,7 +69,7 @@ def every_visit_prediction(mdp: MDP, episodes, steps, policy=None):
 def exploring_starts(mdp, episodes, steps, policy=None):
     # If policy not given, assume equiprobable
     if policy is None:
-        policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+        policy = mdp.equiprobable_policy()
 
     # Initialize action-values matrix
     q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
@@ -102,7 +102,7 @@ def exploring_starts(mdp, episodes, steps, policy=None):
 def on_policy_first_visit(mdp, episodes, steps, epsilon, policy=None):
     # If policy not given, assume equiprobable
     if policy is None:
-        policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+        policy = mdp.equiprobable_policy()
 
     # Initialize action-values matrix
     q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
@@ -141,10 +141,10 @@ def on_policy_first_visit(mdp, episodes, steps, epsilon, policy=None):
 def off_policy_prediction(mdp, episodes, steps, policy=None):
     # If target policy not given, assume equiprobable
     if policy is None:
-        policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+        policy = mdp.equiprobable_policy()
 
     # Behavioral policy
-    b = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+    b = mdp.equiprobable_policy()
 
     # Initialize action-values matrix
     q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
@@ -173,10 +173,10 @@ def off_policy_prediction(mdp, episodes, steps, policy=None):
 
 def off_policy_control(mdp, episodes, steps):
     # Equiprobable target policy
-    policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+    policy = mdp.equiprobable_policy()
 
     # Equiprobable behavioral policy
-    b = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+    b = mdp.equiprobable_policy()
 
     # Initialize action-values matrix
     q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))

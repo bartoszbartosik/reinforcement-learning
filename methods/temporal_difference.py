@@ -3,13 +3,10 @@ import numpy as np
 from mdp.markov_decision_process import MDP
 
 
-def one_step_td(mdp: MDP, episodes, step_size: float, policy=None):
+def one_step_td(mdp: MDP, episodes, steps, step_size: float, policy=None):
     # If policy not given, assume equiprobable
     if policy is None:
-        policy = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
-
-    # Number of steps
-    steps = 1/step_size
+        policy = mdp.equiprobable_policy()
 
     # Initialize state-values matrix
     v = np.zeros(len(mdp.env.states), dtype=float)
@@ -17,11 +14,7 @@ def one_step_td(mdp: MDP, episodes, step_size: float, policy=None):
     for _ in range(episodes):
         step = 0
 
-        # Initialize state
-        available_states = [state for state in mdp.env.states if
-                            state not in mdp.env.terminal_states + mdp.env.obstacle_states]
-
-        state = available_states[np.random.choice(len(available_states))]
+        state = mdp.env.initial_state
         while state not in mdp.env.terminal_states and step < steps:
             s = mdp.env.states.index(state)
 
@@ -47,23 +40,20 @@ def one_step_td(mdp: MDP, episodes, step_size: float, policy=None):
     return v
 
 
-def sarsa(mdp: MDP, episodes, step_size: float, epsilon: float):
-    # Number of steps
-    steps = 1/step_size
-
+def sarsa(mdp: MDP, episodes, steps, step_size: float, epsilon: float):
     # Initialize action-values matrix
-    q = 1/len(mdp.env.actions)*np.ones((len(mdp.env.states), len(mdp.env.actions)))
+    q = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
 
+    # Define action policy
+    take_action = lambda s: mdp.env.actions[np.argmax(q[s])] if np.random.random() >= epsilon else np.random.choice(
+        mdp.env.actions)
+
+    # For each episode
     for _ in range(episodes):
         step = 0
 
         # Initialize state
-        available_states = [state for state in mdp.env.states if
-                            state not in mdp.env.terminal_states + mdp.env.obstacle_states]
-
-        take_action = lambda s: mdp.env.actions[np.argmax(q[s])] if np.random.random() >= epsilon else np.random.choice(mdp.env.actions)
-
-        state = available_states[np.random.choice(len(available_states))]
+        state = mdp.env.initial_state
         while state not in mdp.env.terminal_states and step < steps:
             s = mdp.env.states.index(state)
 

@@ -1,8 +1,6 @@
 import numpy as np
 from mdp.markov_decision_process import MDP
 
-# TODO: remove policy attribute from MDP class
-
 
 def get_optimal_state_value(mdp: MDP) -> np.ndarray:
     # Initialize state-values matrix
@@ -43,17 +41,23 @@ def get_optimal_action_value(mdp: MDP) -> np.ndarray:
     return q
 
 
-def policy_iteration(mdp: MDP) -> (np.ndarray, np.ndarray):
+def policy_iteration(mdp: MDP, policy=None) -> (np.ndarray, np.ndarray):
+    if policy is None:
+        policy = mdp.equiprobable_policy()
+
     while True:
-        v = policy_evaluation(mdp)
-        policy_stable = __policy_improvement(mdp, v)
+        v = policy_evaluation(mdp, policy)
+        policy_stable, policy = __policy_improvement(mdp, policy, v)
         if policy_stable:
             break
 
-    return v, mdp.policy
+    return v, policy
 
 
-def value_iteration(mdp: MDP) -> (np.ndarray, np.ndarray):
+def value_iteration(mdp: MDP, policy=None) -> (np.ndarray, np.ndarray):
+    if policy is None:
+        policy = mdp.equiprobable_policy()
+
     # Initialize state-values matrix
     v = np.zeros(len(mdp.env.states), dtype=float)
 
@@ -68,14 +72,17 @@ def value_iteration(mdp: MDP) -> (np.ndarray, np.ndarray):
             v_new = __compute_state_value(mdp, state, v)
             max_action = __improve_policy(mdp, state, v)
             v[s] = v_new
-            mdp.policy[s] = np.zeros_like(mdp.policy[s])
-            mdp.policy[s][mdp.env.actions.index(max_action)] = 1
+            policy[s] = np.zeros_like(policy[s])
+            policy[s][mdp.env.actions.index(max_action)] = 1
             delta = max(delta, abs(v_new - v_old))
 
-    return v, mdp.policy
+    return v, policy
 
 
-def policy_evaluation(mdp: MDP) -> np.ndarray:
+def policy_evaluation(mdp: MDP, policy=None) -> np.ndarray:
+    if policy is None:
+        policy = mdp.equiprobable_policy()
+
     # Initialize state-values matrix
     v = np.zeros(len(mdp.env.states), dtype=float)
 
@@ -87,7 +94,7 @@ def policy_evaluation(mdp: MDP) -> np.ndarray:
         delta = 0
         for s, state in enumerate(mdp.env.states):
             v_old = v[s]
-            v_new = __evaluate_state(mdp, state, v)
+            v_new = __evaluate_state(mdp, policy, state, v)
             v[s] = v_new
             delta = max(delta, abs(v_new - v_old))
 
@@ -135,7 +142,7 @@ def __compute_action_value(mdp: MDP, state, action, q_table) -> float:
     return q
 
 
-def __evaluate_state(mdp: MDP, state, state_values) -> float:
+def __evaluate_state(mdp: MDP, policy, state, state_values) -> float:
     if state in mdp.env.terminal_states:
         return 0
 
@@ -146,7 +153,7 @@ def __evaluate_state(mdp: MDP, state, state_values) -> float:
     for a, action in enumerate(mdp.env.actions):
         probs, next_states = mdp.env.get_next_transitions(state, action)
         for prob, next_state in zip(probs, next_states):
-            pi_a = mdp.policy[mdp.env.states.index(state)][a]
+            pi_a = policy[mdp.env.states.index(state)][a]
             reward = mdp.rw(state, action, next_state)
             v += pi_a * (prob * (reward + mdp.gamma * state_values[mdp.env.states.index(next_state)]))
 
@@ -169,16 +176,16 @@ def __improve_policy(mdp: MDP, state, state_values) -> str:
     return max_action
 
 
-def __policy_improvement(mdp: MDP, v: np.ndarray) -> bool:
+def __policy_improvement(mdp: MDP, policy, v: np.ndarray) -> (bool, np.ndarray):
     policy_stable = True
     for s, state in enumerate(mdp.env.states):
-        action_old = np.random.choice(mdp.env.actions, p=mdp.policy[state])
+        action_old = np.random.choice(mdp.env.actions, p=policy[state])
         action_new = __improve_policy(mdp, state, v)
 
-        mdp.policy[s] = np.zeros_like(mdp.policy[state])
-        mdp.policy[s][mdp.env.actions.index(action_new)] = 1
+        policy[s] = np.zeros_like(policy[state])
+        policy[s][mdp.env.actions.index(action_new)] = 1
 
         if action_old != action_new:
             policy_stable = False
 
-    return policy_stable
+    return policy_stable, policy

@@ -15,19 +15,21 @@ class MDP:
         # Initialize discount factor
         self.gamma = discount_factor
 
-        # Initialize as equiprobable random policy
-        self.policy = 1/len(self.env.actions)*np.ones((len(self.env.states), len(self.env.actions)))
 
+    def generate_episode(self, steps, policy, initial_state=None) -> list:
+        # If initial state not given, choose random
+        if initial_state is None:
+            initial_state = self.env.available_states[np.random.choice(len(self.env.available_states))]
+        else:
+            initial_state = initial_state
 
-    def generate_episode(self, steps, policy) -> list:
         # Initialize episode tuples list
         episode: [tuple] = []
 
         for T in range(steps):
             if T == 0:
                 # Randomly choose T_0 state which is not a terminal nor obstacle state
-                available_states = [state for state in self.env.states if state not in self.env.terminal_states + self.env.obstacle_states]
-                self.env.state = available_states[np.random.choice(len(available_states))]
+                self.env.state = initial_state
 
             # Update current state
             state = self.env.state
@@ -53,6 +55,10 @@ class MDP:
 
     def get_next_state(self, state, action):
         return self.env.get_next_state(state, action)
+
+
+    def equiprobable_policy(self):
+        return 1 / len(self.env.actions) * np.ones((len(self.env.states), len(self.env.actions)))
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

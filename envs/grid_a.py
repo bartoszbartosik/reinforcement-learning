@@ -5,7 +5,6 @@ from envs.grid import Grid
 
 class GridA(Grid):
 
-
     def __init__(self, width, height):
         super().__init__(width, height)
 
