@@ -161,12 +161,12 @@ def off_policy_prediction(mdp, episodes, steps, policy=None):
             if w == 0:
                 break
 
-            state_id, action_id = mdp.env.states.index(state), mdp.env.actions.index(action)
+            s, a = mdp.env.states.index(state), mdp.env.actions.index(action)
             G = mdp.gamma * G + reward
-            c[state_id][action_id] += w
-            q[state_id][action_id] += w/c[state_id, action_id] * (G - q[state_id][action_id])
+            c[s][a] += w
+            q[s][a] += w/c[s, a] * (G - q[s][a])
 
-            w *= policy[state_id][action_id]/b[state_id][action_id]
+            w *= policy[s][a]/b[s][a]
 
     return q
 
@@ -190,19 +190,19 @@ def off_policy_control(mdp, episodes, steps):
 
         # For each step (T-1, T-2, ..., 0) of an episode
         for state, action, reward in reversed(episode):
-            state_id, action_id = mdp.env.states.index(state), mdp.env.actions.index(action)
+            s, a = mdp.env.states.index(state), mdp.env.actions.index(action)
             G = mdp.gamma * G + reward
-            c[state_id][action_id] += w
-            q[state_id][action_id] += w/c[state_id, action_id] * (G - q[state_id][action_id])
+            c[s][a] += w
+            q[s][a] += w/c[s, a] * (G - q[s][a])
 
-            max_action_id = np.argmax(q[state_id])
-            policy[state_id] = np.zeros_like(policy[state_id])
-            policy[state_id][max_action_id] = 1
+            max_a = np.argmax(q[s])
+            policy[s] = np.zeros_like(policy[s])
+            policy[s][max_a] = 1
 
-            if action_id != max_action_id:
+            if a != max_a:
                 break
 
-            w *= 1/b[state_id][action_id]
+            w *= 1/b[s][a]
 
     return q, policy
 
