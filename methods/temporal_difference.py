@@ -177,6 +177,51 @@ def expected_sarsa(mdp: MDP, episodes, steps, step_size: float, epsilon: float, 
     return q
 
 
+def double_qlearning(mdp: MDP, episodes, steps, step_size: float, epsilon: float):
+
+    # Initialize action-values matrices
+    q1 = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
+    q2 = np.zeros((len(mdp.env.states), len(mdp.env.actions)))
+
+    # Define an epsilon-greedy action policy
+    def take_action(state):
+        q12 = q1[state] + q2[state]
+        if np.random.random() >= epsilon:
+            return mdp.env.actions[np.argmax(q12)]
+        else:
+            return np.random.choice(mdp.env.actions)
+
+    # For each episode
+    for _ in range(episodes):
+        step = 0
+
+        # Initialize state
+        state = mdp.env.initial_state
+        while state not in mdp.env.terminal_states and step < steps:
+            s = mdp.env.states.index(state)
+
+            # Choose action greedily derived from the q values
+            action = take_action(s)
+            a = mdp.env.actions.index(action)
+
+            # Get the next state
+            next_state = mdp.get_next_state(state, action)
+            sp = mdp.env.states.index(next_state)
+
+            # Get the reward
+            reward = mdp.rw(state, action, next_state)
+
+            # Compute the state-action value
+            if np.random.random() >= 0.5:
+                q1[s][a] = q1[s][a] + step_size * (reward + mdp.gamma * q2[sp][np.argmax(q1[sp])] - q1[s][a])
+            else:
+                q2[s][a] = q2[s][a] + step_size * (reward + mdp.gamma * q1[sp][np.argmax(q2[sp])] - q2[s][a])
 
 
+            # Assign the next state as current for next iteration
+            state = next_state
 
+            # Episode step increment
+            step += 1
+
+    return q1
